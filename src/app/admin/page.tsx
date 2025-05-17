@@ -28,9 +28,9 @@ interface Application {
   created_at: string;
   applicant_name: string;
   register_number: string;
+  application_number?: number;
   mobile_number: string;
   whatsapp_number: string;
-  single_window_appln_no: string;
   qualifying_exam: string;
   exam_year: string;
   school_name: string;
@@ -231,6 +231,7 @@ export default function AdminPage() {
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="bg-muted">
+                        <th className="p-2 text-left">Appln. No.</th>
                         <th className="p-2 text-left">Register No.</th>
                         <th className="p-2 text-left">Name</th>
                         <th className="p-2 text-left">Mobile</th>
@@ -246,6 +247,7 @@ export default function AdminPage() {
                           key={app.id}
                           className="border-b border-gray-200 hover:bg-muted/50"
                         >
+                          <td className="p-2">{app.application_number || "N/A"}</td>
                           <td className="p-2">{app.register_number}</td>
                           <td className="p-2">{app.applicant_name}</td>
                           <td className="p-2">{app.mobile_number}</td>

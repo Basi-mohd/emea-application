@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { submitApplication } from "../actions"; // Import the server action
 
 // Define proper types for form data
 interface FormData {
@@ -27,7 +28,7 @@ interface FormData {
   applicant_name: string;
   mobile_number: string;
   whatsapp_number: string;
-  single_window_appln_no: string;
+  application_number?: number; // Added: Optional for initial form, populated after submission
   qualifying_exam: string;
   register_number: string;
   exam_year: string;
@@ -115,6 +116,9 @@ export default function ApplyPage() {
   const [isCheckingRegisterNumber, setIsCheckingRegisterNumber] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
+  // Add validation state for form fields
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  
   // Function to generate test data for form
   const getTestData = (): FormData => {
     return {
@@ -124,7 +128,7 @@ export default function ApplyPage() {
       applicant_name: "",
       mobile_number: "",
       whatsapp_number: "",
-      single_window_appln_no: "",
+      // application_number is not set in getTestData as it's generated
       qualifying_exam: "",
       register_number: "",
       exam_year: "",
@@ -149,14 +153,14 @@ export default function ApplyPage() {
       },
       dependent_jawans_killed: false,
       dependent_jawans_service: false,
-      sports_state_participation: "", // Or 0 if number preferred and input handles it
+      sports_state_participation: 0, // Or 0 if number preferred and input handles it
       sports_district: {
         a_grade: 0,
         b_grade: 0,
         c_grade: 0,
         participation: 0,
       },
-      kalolsavam_state_participation: "", // Or 0
+      kalolsavam_state_participation: 0, // Or 0
       kalolsavam_district: {
         a_grade: 0,
         b_grade: 0,
@@ -278,6 +282,7 @@ export default function ApplyPage() {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
+    // First update the form data as before
     if (name === 'register_number') {
       // When register number changes, update the form data and trigger validation
       setFormData({
@@ -291,6 +296,15 @@ export default function ApplyPage() {
       } else {
         setRegisterNumberError(null);
       }
+    } else if (name === 'eligibility.clubs_count') {
+      // Special case for clubs_count which is a number input
+      setFormData({
+        ...formData,
+        eligibility: {
+          ...formData.eligibility,
+          clubs_count: value === '' ? 0 : parseInt(value),
+        },
+      });
     } else if (type === "checkbox") {
       if (name.startsWith("ncc_type.")) {
         const nccType = name.split(".")[1];
@@ -340,7 +354,7 @@ export default function ApplyPage() {
         ...formData,
         sports_district: {
           ...formData.sports_district,
-          [gradeType]: parseInt(value) || 0,
+          [gradeType]: value === '' ? 0 : parseInt(value),
         },
       });
     } else if (name.startsWith("kalolsavam_district.")) {
@@ -349,7 +363,7 @@ export default function ApplyPage() {
         ...formData,
         kalolsavam_district: {
           ...formData.kalolsavam_district,
-          [gradeType]: parseInt(value) || 0,
+          [gradeType]: value === '' ? 0 : parseInt(value),
         },
       });
     } else if (name.startsWith("co_curricular.")) {
@@ -363,7 +377,7 @@ export default function ApplyPage() {
           ...formData.co_curricular,
           [fair]: {
             ...formData.co_curricular[fair],
-            [grade]: parseInt(value) || 0,
+            [grade]: value === '' ? 0 : parseInt(value),
           },
         },
       });
@@ -375,16 +389,130 @@ export default function ApplyPage() {
         ...formData,
         course_preferences: newPreferences,
       });
+    } else if (name === 'sports_state_participation' || name === 'kalolsavam_state_participation') {
+      setFormData({
+        ...formData,
+        [name]: value === '' ? 0 : parseInt(value),
+      });
     } else {
       setFormData({
         ...formData,
         [name]: value,
       });
     }
+
+    // Then validate the field
+    validateField(name, value);
+  };
+
+  // Function to validate a single field
+  const validateField = (name: string, value: string) => {
+    const errors = { ...validationErrors };
+    
+    // Clear previous error for this field
+    delete errors[name];
+    
+    // Mobile number validation
+    if (name === 'mobile_number' || name === 'whatsapp_number' || name === 'google_pay_number') {
+      if (value.trim() === '') {
+        errors[name] = 'This field is required';
+      } else if (!/^\d{10}$/.test(value)) {
+        errors[name] = 'Must be exactly 10 digits';
+      }
+    }
+    
+    // Fee validation
+    if (name === 'fee_paid' && value.trim() !== '' && parseFloat(value) <= 0) {
+      errors[name] = 'Fee must be greater than 0';
+    }
+    
+    setValidationErrors(errors);
+  };
+
+  // Function to check if all validations pass
+  const isFormValid = () => {
+    // Check if there are any validation errors
+    if (Object.keys(validationErrors).length > 0) {
+      return false;
+    }
+    
+    // Check required fields
+    const requiredFields = [
+      'fee_paid', 'google_pay_number', 'payment_date', 'applicant_name',
+      'mobile_number', 'whatsapp_number',
+      'qualifying_exam', 'register_number', 'exam_year', 'school_name',
+      'gender', 'religion', 'date_of_birth', 'mother_name', 'father_name',
+      'permanent_address', 'house_name', 'post_office', 'taluk',
+      'panchayath_municipality', 'declaration'
+    ];
+    
+    for (const field of requiredFields) {
+      if (!formData[field as keyof FormData]) {
+        return false;
+      }
+    }
+    
+    // Also ensure we have at least one course preference
+    if (!formData.course_preferences[0]) {
+      return false;
+    }
+    
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Validate all fields before submission
+    const requiredFields = [
+      'fee_paid', 'google_pay_number', 'payment_date', 'applicant_name',
+      'mobile_number', 'whatsapp_number',
+      'qualifying_exam', 'register_number', 'exam_year', 'school_name',
+      'gender', 'religion', 'date_of_birth', 'mother_name', 'father_name',
+      'permanent_address', 'house_name', 'post_office', 'taluk',
+      'panchayath_municipality'
+    ];
+    
+    const errors = { ...validationErrors };
+    let hasError = false;
+    
+    // Check required fields
+    for (const field of requiredFields) {
+      const value = String(formData[field as keyof FormData] || '');
+      if (!value.trim()) {
+        errors[field] = 'This field is required';
+        hasError = true;
+      } else {
+        // Validate phone numbers
+        if (['mobile_number', 'whatsapp_number', 'google_pay_number'].includes(field) && !/^\d{10}$/.test(value)) {
+          errors[field] = 'Must be exactly 10 digits';
+          hasError = true;
+        }
+      }
+    }
+    
+    // Check course preference
+    if (!formData.course_preferences[0]) {
+      errors['course_preferences[0]'] = 'At least one course preference is required';
+      hasError = true;
+    }
+    
+    // Check declaration
+    if (!formData.declaration) {
+      errors['declaration'] = 'You must agree to the declaration';
+      hasError = true;
+    }
+    
+    setValidationErrors(errors);
+    
+    if (hasError) {
+      // Scroll to the first error
+      const firstErrorField = document.querySelector('[aria-invalid="true"]');
+      if (firstErrorField) {
+        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
     
     // Check register number immediately before submitting
     if (formData.register_number.trim()) {
@@ -412,41 +540,33 @@ export default function ApplyPage() {
     setLoading(true);
 
     try {
-      // Format the data for submission
+      // Format the data for submission (this part remains largely the same)
       const { declaration, ...dataWithoutDeclaration } = formData;
       
-      // Format the data for submission
-      const submissionData = {
-        // Basic information fields (keep from rest)
-        fee_paid: parseFloat(formData.fee_paid) || 0,
-        google_pay_number: formData.google_pay_number,
-        payment_date: formData.payment_date,
-        applicant_name: formData.applicant_name,
-        mobile_number: formData.mobile_number,
-        whatsapp_number: formData.whatsapp_number,
-        single_window_appln_no: formData.single_window_appln_no,
-        qualifying_exam: formData.qualifying_exam,
-        register_number: formData.register_number,
-        exam_year: formData.exam_year,
-        school_name: formData.school_name,
-        gender: formData.gender,
-        religion: formData.religion,
-        date_of_birth: formData.date_of_birth,
-        mother_name: formData.mother_name,
-        father_name: formData.father_name,
-        
-        // Address fields
-        permanent_address: formData.permanent_address,
-        house_name: formData.house_name,
-        post_office: formData.post_office,
-        taluk: formData.taluk,
-        panchayath_municipality: formData.panchayath_municipality,
-        
-        // Exam type
-        exam_type: formData.exam_type,
-        
-        // Transformed/structured fields
-        course_preferences: formData.course_preferences
+      // Format the data for submission (this part remains largely the same)
+      const submissionPayload = {
+        fee_paid: parseFloat(dataWithoutDeclaration.fee_paid) || 0,
+        google_pay_number: dataWithoutDeclaration.google_pay_number,
+        payment_date: dataWithoutDeclaration.payment_date,
+        applicant_name: dataWithoutDeclaration.applicant_name,
+        mobile_number: dataWithoutDeclaration.mobile_number,
+        whatsapp_number: dataWithoutDeclaration.whatsapp_number,
+        qualifying_exam: dataWithoutDeclaration.qualifying_exam,
+        register_number: dataWithoutDeclaration.register_number,
+        exam_year: dataWithoutDeclaration.exam_year,
+        school_name: dataWithoutDeclaration.school_name,
+        gender: dataWithoutDeclaration.gender,
+        religion: dataWithoutDeclaration.religion,
+        date_of_birth: dataWithoutDeclaration.date_of_birth,
+        mother_name: dataWithoutDeclaration.mother_name,
+        father_name: dataWithoutDeclaration.father_name,
+        permanent_address: dataWithoutDeclaration.permanent_address,
+        house_name: dataWithoutDeclaration.house_name,
+        post_office: dataWithoutDeclaration.post_office,
+        taluk: dataWithoutDeclaration.taluk,
+        panchayath_municipality: dataWithoutDeclaration.panchayath_municipality,
+        exam_type: dataWithoutDeclaration.exam_type,
+        course_preferences: dataWithoutDeclaration.course_preferences
           .map((pref, index) => {
             const selectedCourse = courseOptions.find(
               (course) => course.code === pref,
@@ -458,69 +578,75 @@ export default function ApplyPage() {
             };
           })
           .filter((pref) => pref.code),
-        
         subject_grades:
-          formData.exam_type === "sslc"
-            ? formData.sslc_grades
-            : formData.cbse_marks,
-            
+          dataWithoutDeclaration.exam_type === "sslc"
+            ? dataWithoutDeclaration.sslc_grades
+            : dataWithoutDeclaration.cbse_marks,
         bonus_points: {
-          ncc: formData.ncc_selected,
-          ncc_type: formData.ncc_type,
-          dependent_jawans_killed: formData.dependent_jawans_killed,
-          dependent_jawans_service: formData.dependent_jawans_service,
+          ncc: dataWithoutDeclaration.ncc_selected,
+          ncc_type: dataWithoutDeclaration.ncc_type,
+          dependent_jawans_killed: dataWithoutDeclaration.dependent_jawans_killed,
+          dependent_jawans_service: dataWithoutDeclaration.dependent_jawans_service,
         },
-        
         sports_participation: {
-          state_level: parseInt(typeof formData.sports_state_participation === 'string' ? formData.sports_state_participation : formData.sports_state_participation.toString()) || 0,
-          district_level: formData.sports_district,
+          state_level: parseInt(typeof dataWithoutDeclaration.sports_state_participation === 'string' ? dataWithoutDeclaration.sports_state_participation : dataWithoutDeclaration.sports_state_participation.toString()) || 0,
+          district_level: dataWithoutDeclaration.sports_district,
         },
-        
         kalolsavam_participation: {
-          state_level: parseInt(typeof formData.kalolsavam_state_participation === 'string' ? formData.kalolsavam_state_participation : formData.kalolsavam_state_participation.toString()) || 0,
-          district_level: formData.kalolsavam_district,
+          state_level: parseInt(typeof dataWithoutDeclaration.kalolsavam_state_participation === 'string' ? dataWithoutDeclaration.kalolsavam_state_participation : dataWithoutDeclaration.kalolsavam_state_participation.toString()) || 0,
+          district_level: dataWithoutDeclaration.kalolsavam_district,
         },
-        
-        co_curricular_activities: formData.co_curricular,
-        eligibility: formData.eligibility,
-        national_state_test: formData.national_state_test,
+        co_curricular_activities: dataWithoutDeclaration.co_curricular,
+        eligibility: dataWithoutDeclaration.eligibility,
+        national_state_test: dataWithoutDeclaration.national_state_test,
       };
 
-      // Submit to Supabase
-      const { data, error } = await supabase
-        .from("applications")
-        .insert([submissionData])
-        .select();
+      // Call the server action to submit the application
+      const { data, error, application_number } = await submitApplication(submissionPayload);
 
       if (error) {
         console.error("Error submitting application:", error);
-        alert("Please check your details and try again.");
+        // Check for unique constraint violation on application_number
+        if (error.message && error.message.includes('duplicate key value violates unique constraint "applications_application_number_key"')) {
+          alert("Failed to generate a unique application number. Please try submitting again.");
+        } else {
+          alert("Please check your details and try again. Error: " + error.message);
+        }
       } else {
-        console.log("Application submitted successfully:", data);
+        console.log("Application submitted successfully:", data, "App No:", application_number);
         
         try {
-          // Generate a secure one-time token for the success page
           const token = generateSecureToken();
-          console.log(token);
-          
-          // Store key form data in sessionStorage for the success page to access
-          const formKeys = [
+          sessionStorage.setItem('submissionToken', token);
+          sessionStorage.setItem('submissionTimestamp', Date.now().toString());
+
+          // Store the actual submitted data (which now includes application_number from the server response if successful)
+          // and other relevant form data for the success page.
+          const successPageData = {
+            ...dataWithoutDeclaration, // original form data
+            application_number: application_number, // the generated number
+            // include other transformed data if necessary, though `data` from server might be more accurate
+            // For simplicity, we're primarily adding application_number here.
+          };
+          sessionStorage.setItem('applicationData', JSON.stringify(successPageData)); // Store all relevant data
+
+          // Also store individual fields that the success page might be using directly via getFromSession
+          const formKeysToStore = [
             'fee_paid', 'google_pay_number', 'payment_date', 'applicant_name',
-            'mobile_number', 'whatsapp_number', 'single_window_appln_no',
+            'mobile_number', 'whatsapp_number',
             'qualifying_exam', 'register_number', 'exam_year', 'school_name',
             'gender', 'religion', 'date_of_birth', 'mother_name', 'father_name',
             'permanent_address', 'house_name', 'post_office', 'taluk',
-            'panchayath_municipality', 'exam_type', 'eligibility', 'declaration',
+            'panchayath_municipality', 'exam_type', 'eligibility',
             'sslc_grades', 'cbse_marks', 'sports_state_participation', 'sports_district',
             'kalolsavam_state_participation', 'kalolsavam_district', 'co_curricular',
-            'course_preferences', 'national_state_test'
+            'national_state_test'
           ];
-          
-          // Store basic form fields
-          formKeys.forEach(key => {
-            if (formData[key as keyof FormData]) {
-              const value = formData[key as keyof FormData];
-              // Check if the value is an object and stringify it
+
+          formKeysToStore.forEach(key => {
+            const typedKey = key as keyof typeof successPageData;
+            if (successPageData[typedKey]) {
+              const value = successPageData[typedKey];
               if (typeof value === 'object' && value !== null) {
                 sessionStorage.setItem(key, JSON.stringify(value));
               } else {
@@ -528,20 +654,18 @@ export default function ApplyPage() {
               }
             }
           });
-          
-          // Store course preferences 
-          formData.course_preferences.forEach((pref, index) => {
-            if (pref) {
-              const courseName = courseOptions.find(c => c.code === pref)?.name || '';
-              sessionStorage.setItem(`course_preferences[${index}]`, `${pref} - ${courseName}`);
+           // Explicitly store application_number
+          if (application_number) {
+            sessionStorage.setItem('application_number', String(application_number));
+          }
+           // Store course preferences correctly
+          successPageData.course_preferences.forEach((prefCode, index) => {
+            if (prefCode) {
+              const courseDetail = courseOptions.find(c => c.code === prefCode);
+              sessionStorage.setItem(`course_preferences[${index}]`, `${prefCode} - ${courseDetail ? courseDetail.name : ''}`);
             }
           });
-          
-          // Store submission token and timestamp
-          sessionStorage.setItem('submissionToken', token);
-          sessionStorage.setItem('submissionTimestamp', Date.now().toString());
-          
-          // Redirect to success page with token
+
           router.push(`/apply/success?token=${encodeURIComponent(token)}`);
         } catch (e) {
           // Session storage might be disabled in some browsers
@@ -636,9 +760,17 @@ export default function ApplyPage() {
                     name="fee_paid"
                     value={formData.fee_paid}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border ${
+                      validationErrors['fee_paid'] ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md focus:outline-none focus:ring-1 ${
+                      validationErrors['fee_paid'] ? 'focus:ring-red-500' : 'focus:ring-blue-500'
+                    }`}
+                    aria-invalid={validationErrors['fee_paid'] ? 'true' : 'false'}
                     required
                   />
+                  {validationErrors['fee_paid'] && (
+                    <p className="text-sm text-red-500 mt-1">{validationErrors['fee_paid']}</p>
+                  )}
                 </div>
 
                 <div className="md:col-span-1">
@@ -648,15 +780,23 @@ export default function ApplyPage() {
                 </div>
                 <div className="md:col-span-2">
                   <input
-                    type="number"
+                    type="tel"
                     name="google_pay_number"
                     value={formData.google_pay_number}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border ${
+                      validationErrors['google_pay_number'] ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md focus:outline-none focus:ring-1 ${
+                      validationErrors['google_pay_number'] ? 'focus:ring-red-500' : 'focus:ring-blue-500'
+                    }`}
                     placeholder="Enter 10 digit number"
                     maxLength={10}
+                    aria-invalid={validationErrors['google_pay_number'] ? 'true' : 'false'}
                     required
                   />
+                  {validationErrors['google_pay_number'] && (
+                    <p className="text-sm text-red-500 mt-1">{validationErrors['google_pay_number']}</p>
+                  )}
                 </div>
 
                 <div className="md:col-span-1">
@@ -699,15 +839,23 @@ export default function ApplyPage() {
                 </div>
                 <div className="md:col-span-2">
                   <input
-                    type="number"
+                    type="tel"
                     name="mobile_number"
                     value={formData.mobile_number}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border ${
+                      validationErrors['mobile_number'] ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md focus:outline-none focus:ring-1 ${
+                      validationErrors['mobile_number'] ? 'focus:ring-red-500' : 'focus:ring-blue-500'
+                    }`}
                     placeholder="Enter 10 digit number"
                     maxLength={10}
+                    aria-invalid={validationErrors['mobile_number'] ? 'true' : 'false'}
                     required
                   />
+                  {validationErrors['mobile_number'] && (
+                    <p className="text-sm text-red-500 mt-1">{validationErrors['mobile_number']}</p>
+                  )}
                 </div>
 
                 <div className="md:col-span-1">
@@ -717,32 +865,23 @@ export default function ApplyPage() {
                 </div>
                 <div className="md:col-span-2">
                   <input
-                    type="number"
+                    type="tel"
                     name="whatsapp_number"
                     value={formData.whatsapp_number}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={`w-full px-3 py-2 border ${
+                      validationErrors['whatsapp_number'] ? 'border-red-500' : 'border-gray-300'
+                    } rounded-md focus:outline-none focus:ring-1 ${
+                      validationErrors['whatsapp_number'] ? 'focus:ring-red-500' : 'focus:ring-blue-500'
+                    }`}
                     placeholder="Enter 10 digit number"
                     maxLength={10}
+                    aria-invalid={validationErrors['whatsapp_number'] ? 'true' : 'false'}
                     required
                   />
-                </div>
-
-                <div className="md:col-span-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Single Window System Appln. No<span className="text-red-500">*</span>
-                  </label>
-                </div>
-                <div className="md:col-span-2">
-                  <input
-                    type="number"
-                    name="single_window_appln_no"
-                    value={formData.single_window_appln_no}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    placeholder="Enter 10 digit number"
-                    required
-                  />
+                  {validationErrors['whatsapp_number'] && (
+                    <p className="text-sm text-red-500 mt-1">{validationErrors['whatsapp_number']}</p>
+                  )}
                 </div>
 
                 <div className="md:col-span-1">
@@ -1390,7 +1529,12 @@ export default function ApplyPage() {
                       name="course_preferences[0]"
                       value={formData.course_preferences[0]}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border ${
+                        validationErrors['course_preferences[0]'] ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md focus:outline-none focus:ring-1 ${
+                        validationErrors['course_preferences[0]'] ? 'focus:ring-red-500' : 'focus:ring-blue-500'
+                      }`}
+                      aria-invalid={validationErrors['course_preferences[0]'] ? 'true' : 'false'}
                       required
                     >
                       <option value="">Select code/subject</option>
@@ -1400,6 +1544,9 @@ export default function ApplyPage() {
                         </option>
                       ))}
                     </select>
+                    {validationErrors['course_preferences[0]'] && (
+                      <p className="text-sm text-red-500 mt-1">{validationErrors['course_preferences[0]']}</p>
+                    )}
                   </div>
                 </div>
                 <div className="grid grid-cols-6 gap-4 mb-2">
@@ -2142,20 +2289,28 @@ export default function ApplyPage() {
                       type="checkbox"
                       checked={formData.declaration}
                       onChange={handleInputChange}
-                      className="w-4 h-4 border border-gray-300 rounded focus:ring-3 focus:ring-blue-500"
+                      className={`w-4 h-4 border ${
+                        validationErrors['declaration'] ? 'border-red-500' : 'border-gray-300'
+                      } rounded focus:ring-3 focus:ring-blue-500`}
+                      aria-invalid={validationErrors['declaration'] ? 'true' : 'false'}
                       required
                     />
                   </div>
                   <div className="ml-3 text-sm">
                     <label
                       htmlFor="declaration"
-                      className="font-medium text-gray-700"
+                      className={`font-medium ${
+                        validationErrors['declaration'] ? 'text-red-500' : 'text-gray-700'
+                      }`}
                     >
                       I do hereby declare that the information furnished above
                       is true and correct to the best of my knowledge and
                       belief. We know that falsely information may lead to the
                       cancellation of application.
                     </label>
+                    {validationErrors['declaration'] && (
+                      <p className="text-sm text-red-500 mt-1">{validationErrors['declaration']}</p>
+                    )}
                   </div>
                 </div>
               </div>

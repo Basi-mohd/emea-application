@@ -219,7 +219,8 @@ function ApplicationSuccessContent() {
           <div className="bg-blue-50 p-3 border border-blue-200 rounded-md mb-4">
             <div className="flex justify-between items-center">
               <p className="text-sm text-blue-800">
-                 </p>
+                <span className="font-semibold">Application Number:</span> {application?.application_number || getFromSession('application_number', "N/A")}
+              </p>
               <p className="text-sm text-blue-800">
                 <span className="font-semibold">Submission Date:</span> {new Date().toLocaleDateString()}
               </p>
@@ -250,9 +251,9 @@ function ApplicationSuccessContent() {
                       <td className="py-1.5 px-3 font-medium bg-gray-50">Religion:</td>
                       <td className="py-1.5 px-3">{application?.religion || getFromSession('religion', "")}</td>
                     </tr>
-                    <tr>
-                      <td className="py-1.5 px-3 font-medium bg-gray-50">Single Window No:</td>
-                      <td className="py-1.5 px-3">{application?.single_window_appln_no || getFromSession('single_window_appln_no', "")}</td>
+                    <tr className="border-b">
+                      <td className="py-1.5 px-3 font-medium bg-gray-50">Ration Card No:</td>
+                      <td className="py-1.5 px-3">{application?.ration_card_no || getFromSession('ration_card_no', "")}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -269,7 +270,7 @@ function ApplicationSuccessContent() {
                       <td className="py-1.5 px-3">{application?.father_name || getFromSession('father_name', "")}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="py-1.5 px-3 font-medium bg-gray-50">Mobile:</td>
+                      <td className="py-1.5 px-3 font-medium bg-gray-50">Mobile No:</td>
                       <td className="py-1.5 px-3">{application?.mobile_number || getFromSession('mobile_number', "")}</td>
                     </tr>
                     <tr className="border-b">

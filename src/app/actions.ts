@@ -162,3 +162,48 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/sign-in");
 };
+
+export const submitApplication = async (submissionData: any) => {
+  const supabase = await createClient();
+
+  // 1. Get the maximum existing application_number
+  const { data: maxData, error: maxError } = await supabase
+    .from("applications")
+    .select("application_number")
+    .order("application_number", { ascending: false })
+    .limit(1)
+    .single();
+
+  if (maxError && maxError.code !== 'PGRST116') { // PGRST116: 'query returned no rows'
+    console.error("Error fetching max application_number:", maxError);
+    return { data: null, error: maxError, application_number: undefined };
+  }
+
+  let nextApplicationNumber = 101;
+  if (maxData && maxData.application_number) {
+    nextApplicationNumber = Number(maxData.application_number) + 1;
+    if (nextApplicationNumber < 101) {
+      nextApplicationNumber = 101;
+    }
+  }
+
+  // 2. Add the generated application_number to the submission data
+  const dataToInsert = {
+    ...submissionData,
+    application_number: nextApplicationNumber,
+  };
+
+  // 3. Insert the application
+  const { data, error } = await supabase
+    .from("applications")
+    .insert([dataToInsert])
+    .select()
+    .single(); // Assuming we expect one row back after insert
+
+  if (error) {
+    console.error("Error inserting application:", error);
+    return { data: null, error: error, application_number: undefined };
+  }
+
+  return { data, error: null, application_number: nextApplicationNumber };
+};

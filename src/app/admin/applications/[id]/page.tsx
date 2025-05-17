@@ -122,21 +122,23 @@ export default async function ApplicationDetail({
                       {application.applicant_name}
                     </div>
 
-                    <div className="font-medium">Mobile Number:</div>
+                    <div className="font-medium">Application Number:</div>
                     <div className="md:col-span-2">
-                      {application.mobile_number}
+                      {application.application_number || "N/A"}
+                    </div>
+
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="font-medium text-gray-600">Ration Card No:</span>
+                      <span>{application.ration_card_no}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b">
+                      <span className="font-medium text-gray-600">Mobile Number:</span>
+                      <span>{application.mobile_number}</span>
                     </div>
 
                     <div className="font-medium">WhatsApp Number:</div>
                     <div className="md:col-span-2">
                       {application.whatsapp_number}
-                    </div>
-
-                    <div className="font-medium">
-                      Single Window System Appln. No.:
-                    </div>
-                    <div className="md:col-span-2">
-                      {application.single_window_appln_no}
                     </div>
 
                     <div className="font-medium">Qualifying Examination:</div>

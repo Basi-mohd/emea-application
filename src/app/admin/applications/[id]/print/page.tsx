@@ -124,6 +124,9 @@ export default function PrintApplication({
           <div className="bg-blue-50 p-3 border border-blue-200 rounded-md mb-4">
             <div className="flex justify-between items-center">
               <p className="text-sm text-blue-800">
+                <span className="font-semibold">Application Number:</span> {application?.application_number || "N/A"}
+              </p>
+              <p className="text-sm text-blue-800">
                 <span className="font-semibold">Submission Date:</span> {application.created_at ? new Date(application.created_at).toLocaleDateString() : new Date().toLocaleDateString()}
               </p>
             </div>
@@ -154,9 +157,9 @@ export default function PrintApplication({
                       <td className="py-1.5 px-3 font-medium bg-gray-50">Religion:</td>
                       <td className="py-1.5 px-3">{application.religion}</td>
                     </tr>
-                    <tr>
-                      <td className="py-1.5 px-3 font-medium bg-gray-50">Single Window No:</td>
-                      <td className="py-1.5 px-3">{application.single_window_appln_no}</td>
+                    <tr className="border-b">
+                      <td className="py-1.5 px-3 font-medium bg-gray-50">Ration Card No:</td>
+                      <td className="py-1.5 px-3">{application.ration_card_no}</td>
                     </tr>
                   </tbody>
                 </table>

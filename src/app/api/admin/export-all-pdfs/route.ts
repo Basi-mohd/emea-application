@@ -158,15 +158,21 @@ export async function POST(request: NextRequest) {
         addCenteredText('EMEAHSS, KONDOTTY, THURAKKAL P.O.', helveticaBold, 14);
         addCenteredText('APPLICATION FOR PLUS ONE ADMISSION 2025-26(COMMUNITY QUOTA)', helveticaBold, 12);
         
-        // Add submission date
+        // Add submission date and application number
+        page.drawText(`Application Number: ${application.application_number || 'N/A'}`, {
+          x: margin,
+          y: y - 5, // Position below header
+          size: 8,
+          font: helveticaFont,
+        });
         page.drawText(`Submission Date: ${new Date(application.created_at).toLocaleDateString()}`, {
-          x: page.getWidth() - margin - 150,
-          y: y - 5,
+          x: page.getWidth() - margin - 150, // Align to the right
+          y: y - 5, // Same line as application number or adjust as needed
           size: 8,
           font: helveticaFont,
         });
         
-        y -= 20; // Space after header
+        y -= 20; // Space after header details
         
         // Personal Information Section
         drawSectionHeader('Personal Information');
@@ -187,17 +193,18 @@ export async function POST(request: NextRequest) {
         
         // Row 3
         drawTableField('Date of Birth:', application.date_of_birth ? new Date(application.date_of_birth).toLocaleDateString() : '-', col1X, width/2);
-        drawTableField('Mobile:', application.mobile_number, col2X, width/2);
+        drawTableField('Mobile No:', application.mobile_number, col1X, width/2);
         y -= lineHeight * 2;
         
         // Row 4
         drawTableField('Religion:', application.religion, col1X, width/2);
-        drawTableField('WhatsApp:', application.whatsapp_number, col2X, width/2);
+        drawTableField('Ration Card No:', application.ration_card_no, col2X, width/2);
         y -= lineHeight * 2;
         
         // Row 5
-        drawTableField('Single Window No:', application.single_window_appln_no, col1X, width/2);
-        drawTableField('Fee Paid:', application.fee_paid, col2X, width/2);
+        // drawTableField('Single Window No:', application.single_window_appln_no, col1X, width/2); // This line should remain removed/commented
+        drawTableField('Fee Paid:', application.fee_paid, col1X, width/2);
+        drawTableField('WhatsApp:', application.whatsapp_number, col2X, width/2); // Fixed: Removed extra width/2 argument
         y -= lineHeight * 2.5;
         
         // Address Information Section
