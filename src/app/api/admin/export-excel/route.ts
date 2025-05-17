@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       };
       
       // Grade information based on exam type
-      const gradeData = {};
+      const gradeData: Record<string, string | number> = {};
       if (app.subject_grades) {
         if (app.exam_type === 'sslc') {
           // SSLC grades
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
       };
       
       // Co-curricular activities data
-      const coCurricularData = {};
+      const coCurricularData: Record<string, string | number> = {};
       if (app.co_curricular_activities) {
         const activities = [
           { key: 'state_science_fair', name: 'Science Fair' },
@@ -155,10 +155,10 @@ export async function POST(request: NextRequest) {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Applications");
     
     // Auto-size columns
-    const colWidths = [];
+    const colWidths: number[] = [];
     formattedData.forEach(row => {
       Object.keys(row).forEach((key, i) => {
-        const value = String(row[key] || '');
+        const value = String(row[key as keyof typeof row] || '');
         colWidths[i] = Math.max(colWidths[i] || 0, value.length, key.length);
       });
     });
