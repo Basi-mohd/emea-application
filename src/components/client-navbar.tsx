@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { useEffect, useState } from 'react';
 import { createClient } from '../../supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export default function ClientNavbar() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const supabase = createClient();
 
   useEffect(() => {

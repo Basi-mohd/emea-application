@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Printer, Download, Bug } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import "@/app/print.css";
 import { createClient } from "../../../../supabase/client";
 
@@ -60,37 +60,34 @@ const getBoolFromSession = (path: string, defaultValue: boolean = false) => {
   return value === 'true';
 };
 
-export default function ApplicationSuccess() {
+// Define a simple loading component for Suspense fallback
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
+    <div className="text-center p-8">
+      <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p>Loading page...</p>
+    </div>
+  </div>
+);
+
+function ApplicationSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [application, setApplication] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  // Check if this page was accessed after form submission
   useEffect(() => {
     try {
-      // Check for the submission token in sessionStorage
       const submissionToken = sessionStorage.getItem('submissionToken');
       const submissionTimestamp = sessionStorage.getItem('submissionTimestamp');
       const urlToken = searchParams.get('token');
       
-      console.log("Validating access with:", { 
-        hasSubmissionToken: submissionToken,
-        hasTimestamp: submissionTimestamp,
-        hasUrlToken: urlToken,
-      });
-      
       const isValid = validateAccess(submissionToken, submissionTimestamp, urlToken);
-      console.log("Access validation result:", isValid);
       
       if (isValid) {
-        // Set the state first
         setIsAuthorized(true);
-        
-        // Get application data from sessionStorage if available
         const applicationData = sessionStorage.getItem('applicationData');
         if (applicationData) {
           try {
@@ -99,12 +96,7 @@ export default function ApplicationSuccess() {
             console.error("Error parsing application data", e);
           }
         }
-        
-        
-        console.log("Access authorized, tokens cleared from session");
       } else {
-        // Not authorized, will redirect
-        console.log("Access unauthorized");
         setIsAuthorized(false);
       }
     } catch (e) {
@@ -115,63 +107,27 @@ export default function ApplicationSuccess() {
     }
   }, [searchParams]);
 
-  // Validate the access based on token and timestamp
   const validateAccess = (
     token: string | null, 
     timestamp: string | null, 
     urlToken: string | null
   ): boolean => {
-    if (!token || !timestamp || !urlToken) {
-      console.log("Missing required validation parameters");
-      return false;
-    }
-    
-    // Token must match the URL token
-    if (token !== urlToken) {
-      console.log("Token mismatch between session and URL");
-      return false;
-    }
-    
-    // Check if the token has expired (10 minute window)
+    if (!token || !timestamp || !urlToken) return false;
+    if (token !== urlToken) return false;
     const submissionTime = parseInt(timestamp, 10);
     const currentTime = Date.now();
     const timeWindow = 10 * 60 * 1000; // 10 minutes in milliseconds
-    
-    if (isNaN(submissionTime)) {
-      console.log("Invalid timestamp format");
-      return false;
-    }
-    
-    if (currentTime - submissionTime > timeWindow) {
-      console.log("Token expired, time elapsed:", (currentTime - submissionTime) / 1000, "seconds");
-      return false;
-    }
-    
-    return true;
+    if (isNaN(submissionTime)) return false;
+    return !(currentTime - submissionTime > timeWindow);
   };
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
+  const handleDownloadPdf = () => window.print();
 
-  const handleDownloadPdf = () => {
-    // Use browser's print dialog (users can save as PDF from the print dialog)
-    window.print();
-  };
-
-  // Show loading state
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
-        <div className="text-center p-8">
-          <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p>Verifying submission...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
-  // If not authorized, redirect to the application form
   if (!isAuthorized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
@@ -260,7 +216,6 @@ export default function ApplicationSuccess() {
         </div>
 
         <div className="mt-4 space-y-4 print-compact">
-          {/* Create a reference ID for the application */}
           <div className="bg-blue-50 p-3 border border-blue-200 rounded-md mb-4">
             <div className="flex justify-between items-center">
               <p className="text-sm text-blue-800">
@@ -271,7 +226,6 @@ export default function ApplicationSuccess() {
             </div>
           </div>
 
-          {/* Personal Information Table with Better UI */}
           <div className="border rounded-md overflow-hidden">
             <div className="bg-gray-100 px-3 py-2 border-b">
               <h3 className="font-bold text-sm">Personal Information</h3>
@@ -332,7 +286,6 @@ export default function ApplicationSuccess() {
             </div>
           </div>
 
-          {/* Address Information */}
           <div className="border rounded-md overflow-hidden">
             <div className="bg-gray-100 px-3 py-2 border-b">
               <h3 className="font-bold text-sm">Address Information</h3>
@@ -383,9 +336,7 @@ export default function ApplicationSuccess() {
             </div>
           </div>
 
-          {/* Academic and Course Preferences */}
           <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-3 print:gap-2">
-            {/* Academic Information */}
             <div className="border rounded-md overflow-hidden">
               <div className="bg-gray-100 px-3 py-2 border-b">
                 <h3 className="font-bold text-sm">Academic Information</h3>
@@ -416,7 +367,6 @@ export default function ApplicationSuccess() {
               </table>
             </div>
 
-            {/* Course Preferences */}
             <div className="border rounded-md overflow-hidden">
               <div className="bg-gray-100 px-3 py-2 border-b">
                 <h3 className="font-bold text-sm">Course Preferences</h3>
@@ -449,7 +399,6 @@ export default function ApplicationSuccess() {
             </div>
           </div>
 
-          {/* Grades */}
           <div className="border rounded-md overflow-hidden print:break-inside-avoid">
             <div className="bg-gray-100 px-3 py-2 border-b">
               <h3 className="font-bold text-sm">Academic Grades</h3>
@@ -461,7 +410,6 @@ export default function ApplicationSuccess() {
                     {(application?.exam_type || getFromSession('exam_type')) === 'sslc' ? 'SSLC Grades' : 'CBSE Marks'}
                   </h4>
                   {application?.exam_type === 'sslc' || getFromSession('exam_type') === 'sslc' ? (
-                    // SSLC Grades - Horizontal layout
                     <table className="w-full border border-gray-200 text-sm print:text-xs">
                       <tbody>
                         <tr className="bg-gray-50">
@@ -497,7 +445,6 @@ export default function ApplicationSuccess() {
                       </tbody>
                     </table>
                   ) : (
-                    // CBSE Marks - Horizontal layout
                     <table className="w-full border border-gray-200 text-sm print:text-xs">
                       <tbody>
                         <tr className="bg-gray-50">
@@ -522,17 +469,14 @@ export default function ApplicationSuccess() {
             </div>
           </div>
 
-          {/* Force page break here for PDF */}
           <div className="pdf-page-break"></div>
 
-          {/* Bonus Points & Eligibility with Status Badges */}
           <div className="border rounded-md overflow-hidden print:break-inside-avoid">
             <div className="bg-gray-100 px-3 py-2 border-b">
               <h3 className="font-bold text-sm">Bonus Points & Eligibility</h3>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-3 p-3 print:p-2 text-sm print:text-xs">
-              {/* Left Column: Eligibility Badges */}
               <div className="border-r print:border-r pr-2">
                 <div className="mb-3">
                   <h4 className="font-medium border-b pb-1 mb-2">NCC & Eligibility</h4>
@@ -633,9 +577,7 @@ export default function ApplicationSuccess() {
                 </div>
               </div>
               
-              {/* Right Column: Participation Tables */}
               <div className="grid grid-cols-1 gap-3 print:gap-1 pl-2">
-                {/* Sports Participation Table */}
                 <div>
                   <h4 className="font-medium border-b pb-1 mb-2">Sports Participation</h4>
                   <table className="w-full text-xs border border-gray-200">
@@ -673,7 +615,6 @@ export default function ApplicationSuccess() {
                   </table>
                 </div>
                 
-                {/* Kalolsavam Participation Table */}
                 <div>
                   <h4 className="font-medium border-b pb-1 mb-2">Kalolsavam Participation</h4>
                   <table className="w-full text-xs border border-gray-200">
@@ -747,97 +688,70 @@ export default function ApplicationSuccess() {
         </div>
       </div>
       
-      {/* Add print-specific styles */}
       <style jsx global>{`
         @media print {
-          /* Remove browser default headers and footers */
           @page {
             size: A4;
             margin: 0.5cm;
-            /* Hide browser header/footer */
             margin-header: 0;
             margin-footer: 0;
           }
-          
-          /* Hide all headers/footers */
           head, header, footer, .header, .footer, .print-header {
             display: none !important;
           }
-          
-          /* Hide navigation elements */
           nav, .navbar, .navigation, .nav {
             display: none !important;
           }
-          
           body {
             font-size: 10px !important;
             line-height: 1.2 !important;
           }
-          
           .print-container {
             padding: 0.5rem !important;
             max-width: 100% !important;
             margin: 0 !important;
           }
-          
           .space-y-4 > * + * {
             margin-top: 0.35rem !important;
           }
-          
           td, th {
             padding-top: 0.1rem !important;
             padding-bottom: 0.1rem !important;
           }
-          
           h3, h4 {
             font-size: 0.7rem !important;
             margin: 0 !important;
             padding-top: 0.1rem !important;
             padding-bottom: 0.1rem !important;
           }
-          
           p {
             margin: 0 !important;
           }
-          
-          /* Fix for table cutoffs in PDF */
           .border-rounded-md {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
           }
-          
           table {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
           }
-          
-          /* Ensure better page breaks */
           .print:break-before-avoid {
             break-before: avoid !important;
           }
-          
           .print:break-after-avoid {
             break-after: avoid !important;
           }
-          
-          /* Make tables more compact for print */
           .grid {
             grid-gap: 0.15rem !important;
           }
-          
-          /* Force background colors to print */
           .bg-green-500, .bg-gray-300, .bg-gray-50, .bg-gray-100 {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          
-          /* Keep reference ID and submission date from being separated */
           .bg-blue-50 {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
           }
-          
-          /* Set fixed dimensions for indicator dots */
           .inline-block.w-3.h-3 {
             width: 0.5rem !important;
             height: 0.5rem !important;
@@ -845,35 +759,26 @@ export default function ApplicationSuccess() {
             min-height: 0.5rem !important;
             display: inline-block !important;
           }
-          
-          /* Avoid large blocks of whitespace */
           .overflow-hidden {
             overflow: visible !important;
           }
         }
-        
-        /* Additional styling for PDF download */
         @media screen {
           #application-print-content {
             max-width: 100%;
           }
-          
           .grid {
             display: grid !important;
           }
-          
           table {
             border-collapse: collapse;
           }
-          
           table td, table th {
             border: 1px solid #e5e7eb;
           }
-          
           .rounded-md {
             border-radius: 0.375rem;
           }
-          
           .inline-block.w-3.h-3 {
             display: inline-block;
             width: 0.75rem;
@@ -881,36 +786,28 @@ export default function ApplicationSuccess() {
             border-radius: 9999px;
           }
         }
-        
-        /* PDF Optimization specific styles */
         .pdf-optimized table {
           table-layout: fixed !important;
           width: 100% !important;
         }
-        
         .pdf-optimized td, 
         .pdf-optimized th {
           vertical-align: middle !important;
           height: 24px !important;
           padding: 4px 6px !important;
         }
-        
         .pdf-optimized .border.rounded-md.overflow-hidden {
           page-break-inside: avoid !important;
           break-inside: avoid !important;
         }
-        
         .pdf-optimized .grid-cols-2,
         .pdf-optimized .print\\:grid-cols-2 {
           grid-template-columns: 1fr 1fr !important;
         }
-        
         .pdf-optimized .inline-block.w-3.h-3 {
           display: inline-block !important;
           vertical-align: middle !important;
         }
-        
-        /* Force page break in PDF */
         @media print {
           .pdf-page-break {
             page-break-after: always !important;
@@ -919,8 +816,6 @@ export default function ApplicationSuccess() {
             display: block !important;
           }
         }
-        
-        /* Special style for PDF generation */
         @media screen {
           .pdf-page-break {
             display: none;
@@ -928,23 +823,28 @@ export default function ApplicationSuccess() {
         }
       `}</style>
 
-      {/* Add additional PDF support styles */}
       <style jsx>{`
         @media print {
           .border-r.print\\:border-r {
             border-right: 1px solid #e5e7eb !important;
           }
-          
           table {
             width: 100% !important;
             border-collapse: collapse !important;
           }
-          
           table th, table td {
             border: 1px solid #e5e7eb !important;
           }
         }
       `}</style>
     </div>
+  );
+}
+
+export default function ApplicationSuccessPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ApplicationSuccessContent />
+    </Suspense>
   );
 }
