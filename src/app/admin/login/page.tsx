@@ -1,25 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "../../../../supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 // Hardcoded admin credentials
 const ADMIN_EMAIL = "admin@emeahss.edu";
 const ADMIN_PASSWORD = "admin123";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState(ADMIN_EMAIL);
-  const [password, setPassword] = useState(ADMIN_PASSWORD);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
   const router = useRouter();
   const supabase = createClient();
+
+  // Check if already authenticated
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (!error && data.user && data.user.email === ADMIN_EMAIL) {
+          // Already logged in as admin
+          router.replace("/admin");
+        }
+      } catch (err) {
+        console.error("Authentication check error:", err);
+      } finally {
+        setCheckingAuth(false);
+      }
+    }
+    
+    checkAuth();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,20 +53,37 @@ export default function AdminLogin() {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+
+      // Successful login
+      router.replace("/admin");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred during login.");
       setLoading(false);
-      return;
     }
-
-    router.push("/admin");
-    router.refresh();
   };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="mt-4">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex flex-col">
@@ -77,7 +114,6 @@ export default function AdminLogin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled
               />
             </div>
 
@@ -93,7 +129,14 @@ export default function AdminLogin() {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Logging in...
+                </span>
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
         </div>

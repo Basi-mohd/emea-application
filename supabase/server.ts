@@ -17,7 +17,13 @@ export const createClient = async () => {
           cookieStore.set({ name, value, ...options });
         },
         remove(name, options) {
-          cookieStore.set({ name, value: "", ...options });
+          // Set an expired cookie to remove it 
+          cookieStore.set({ 
+            name, 
+            value: "", 
+            ...options, 
+            expires: new Date(0) 
+          });
         },
       },
     }

@@ -26,20 +26,35 @@ export async function middleware(req: NextRequest) {
           });
         },
         remove(name, options) {
-          req.cookies.delete(name);
-          res.cookies.delete(name);
+          // Set expired cookies to properly remove them
+          const cookieOptions = {
+            ...(options || {}),
+            expires: new Date(0),
+            maxAge: 0
+          };
+          
+          req.cookies.set({
+            name,
+            value: "",
+            ...cookieOptions,
+          });
+          
+          res.cookies.set({
+            name,
+            value: "",
+            ...cookieOptions,
+          });
         },
       },
     },
   );
 
   // Refresh session if expired - required for Server Components
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-
-  if (error) {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+  } catch (error) {
     console.error("Auth session error:", error);
   }
 

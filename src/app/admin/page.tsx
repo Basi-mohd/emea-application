@@ -16,12 +16,11 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Download, Printer, Search, FileText } from "lucide-react";
+import { Download, Printer, Search, FileText, Loader2 } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@supabase/supabase-js";
-import { redirect } from "next/navigation";
 
 // Define application type
 interface Application {
@@ -60,40 +59,80 @@ interface Application {
 // Hardcoded admin credentials
 const ADMIN_EMAIL = "admin@emeahss.edu";
 
-export default async function AdminPage({
-  searchParams,
-}: {
-  searchParams: { search?: string }
-}) {
-  const supabase = await createClient();
+export default function AdminPage() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Check authentication and fetch applications
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        
+        if (error || !data.user || data.user.email !== ADMIN_EMAIL) {
+          router.replace("/admin/login");
+          return;
+        }
+        
+        setUser(data.user);
+        await fetchApplications();
+      } catch (err) {
+        console.error("Authentication error:", err);
+        setError("Failed to authenticate");
+        router.replace("/admin/login");
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-  // Check if user is logged in and has admin email
-  if (!user || user.email !== ADMIN_EMAIL) {
-    return redirect("/admin/login");
+    checkAuth();
+  }, [router]);
+
+  // Function to fetch applications
+  async function fetchApplications() {
+    try {
+      let query = supabase
+        .from("applications")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (searchQuery) {
+        query = query.ilike('register_number', `%${searchQuery}%`);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+      
+      setApplications(data || []);
+    } catch (err) {
+      console.error("Error fetching applications:", err);
+      setError("Failed to load applications");
+    }
   }
 
-  // Handle search query
-  const searchQuery = searchParams.search?.trim();
+  // Handle search
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchApplications();
+  };
 
-  // Fetch applications from the database
-  let applicationsQuery = supabase
-    .from("applications")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  // Apply search filter if present
-  if (searchQuery) {
-    applicationsQuery = applicationsQuery.ilike('register_number', `%${searchQuery}%`);
-  }
-
-  const { data: applications, error } = await applicationsQuery;
-
-  if (error) {
-    console.error("Error fetching applications:", error);
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          <p className="mt-4">Loading dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   const totalApplicants = applications?.length || 0;
@@ -165,20 +204,26 @@ export default async function AdminPage({
               
               <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                 {/* Search Box */}
-                <form action="/admin" method="get" className="w-full md:w-64">
+                <form onSubmit={handleSearch} className="w-full md:w-64">
                   <div className="relative">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="search"
-                      name="search"
                       placeholder="Search by register number"
                       className="pl-8"
-                      defaultValue={searchQuery || ""}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
                 </form>
               </div>
             </div>
+
+            {error && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-md mb-4">
+                {error}
+              </div>
+            )}
 
             {applications && applications.length > 0 ? (
               <>
