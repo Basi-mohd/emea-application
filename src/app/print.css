@@ -1,0 +1,85 @@
+/* Print styles for application forms */
+@media print {
+  /* General print settings */
+  @page {
+    size: A4;
+    margin: 0.5cm;
+    margin-header: 0 !important;
+    margin-footer: 0 !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Hide non-printable elements */
+  .print:hidden {
+    display: none !important;
+  }
+  
+  /* Hide browser headers and footers */
+  html {
+    height: auto !important;
+  }
+  
+  /* Ensure content fits on one page */
+  .print-container {
+    padding: 10mm !important;
+    width: 100% !important;
+    max-width: 210mm !important; /* A4 width */
+  }
+  
+  /* Table styles */
+  table {
+    page-break-inside: avoid;
+    font-size: 11pt !important;
+  }
+  
+  /* Avoid breaks inside key elements */
+  tr, h1, h2, h3, p {
+    page-break-inside: avoid;
+  }
+  
+  /* Fine-tune spacing */
+  .print-small-font {
+    font-size: 9px !important;
+  }
+  
+  .print-compact {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Ensure headers and school info is present */
+  .print-header {
+    text-align: center;
+    margin-bottom: 5mm !important;
+  }
+  
+  /* Force background colors */
+  .print-force-color {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* Page break control */
+.break-before-page {
+  page-break-before: always !important;
+  break-before: page !important;
+}
+
+.break-after-page {
+  page-break-after: always !important;
+  break-after: page !important;
+}
+
+.break-inside-avoid {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+} 
