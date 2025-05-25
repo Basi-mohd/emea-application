@@ -303,6 +303,12 @@ export default function ApplyPage() {
       } else {
         setRegisterNumberError(null);
       }
+    } else if (name === 'applicant_name') {
+      // Convert applicant name to uppercase
+      setFormData({
+        ...formData,
+        [name]: value.toUpperCase(),
+      });
     } else if (name === 'eligibility.clubs_count') {
       // Special case for clubs_count which is a number input
       setFormData({
