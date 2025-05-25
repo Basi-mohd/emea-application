@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "../../../supabase/client";
 import ClientNavbar from "@/components/client-navbar";
 import ClientFooter from "@/components/client-footer";
+import { Anek_Malayalam } from "next/font/google";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +20,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { submitApplication } from "../actions"; // Import the server action
+
+const anekMalayalam = Anek_Malayalam({ 
+  subsets: ['malayalam'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
 
 // Define proper types for form data
 interface FormData {
@@ -737,12 +744,18 @@ export default function ApplyPage() {
               EMEAHSS, KONDOTTY, THURAKKAL P.O.
             </h1>
             <p className="text-sm text-gray-600 mt-1">
-              Contact: e-mail:principalemeahss@gmail.com, Mob:9447362750,
-              9446526303, 9961988004
+              Contact: e-mail:principalemeahss@gmail.com, Phone : 04832714450
             </p>
             <h2 className="text-lg font-semibold mt-4">
               APPLICATION FOR PLUS ONE ADMISSION 2025-26(COMMUNITY QUOTA)
             </h2>
+          </div>
+
+          {/* Payment Instructions */}
+          <div className="p-4 bg-amber-50 border border-amber-200 mx-8 mt-4 rounded-lg">
+            <p className={`text-amber-800 text-center font-medium ${anekMalayalam.className}`}>
+              അപേക്ഷ ഫീസായ 30 രൂപ 9495478452 (Rajan Varghese) എന്ന നമ്പറിൽ ഗൂഗിൾ പേ ചെയ്തതിനു ശേഷം അപേക്ഷ സമർപ്പിക്കുക. അവസാന തീയതി ജൂൺ 5 - പ്രിൻസിപ്പൽ
+            </p>
           </div>
 
           <div className="p-8">
