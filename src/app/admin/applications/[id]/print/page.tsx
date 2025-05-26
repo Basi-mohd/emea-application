@@ -158,8 +158,8 @@ export default function PrintApplication({
                       <td className="py-1.5 px-3">{application.religion}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="py-1.5 px-3 font-medium bg-gray-50">Ration Card No:</td>
-                      <td className="py-1.5 px-3">{application.ration_card_no}</td>
+                      <td className="py-1.5 px-3 font-medium bg-gray-50">Register Number:</td>
+                      <td className="py-1.5 px-3">{application.register_number}</td>
                     </tr>
                   </tbody>
                 </table>

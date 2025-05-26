@@ -8,6 +8,17 @@ import { useEffect, useState, Suspense } from "react";
 import "@/app/print.css";
 import { createClient } from "../../../../supabase/client";
 
+const courseOptions = [
+  { code: "01", name: "Physics, Chemistry, Biology & Maths" },
+  { code: "11", name: "History, Economics, Poli. Sci & Sociology" },
+  { code: "35", name: "Journalism, Eng. Lit., Commun. English & Psychology" },
+  { code: "37", name: "Busi. Studies, Accountancy, Economics & Statisctics" },
+  {
+    code: "39",
+    name: "Busi. Studies, Accountancy, Economics & Computer Application",
+  },
+];
+
 // Helper function to safely get values from sessionStorage with JSON parsing
 const getFromSession = (key: string, defaultValue: any = null) => {
   const value = sessionStorage.getItem(key);
@@ -89,9 +100,18 @@ function ApplicationSuccessContent() {
       if (isValid) {
         setIsAuthorized(true);
         const applicationData = sessionStorage.getItem('applicationData');
+        console.log(applicationData)
         if (applicationData) {
           try {
-            setApplication(JSON.parse(applicationData));
+            const parsedData = JSON.parse(applicationData);
+            parsedData.course_preferences = parsedData.course_preferences.map((prefCode: any, index: any) => {
+              if (prefCode) {
+                const courseDetail = courseOptions.find(c => c.code === prefCode);
+                return courseDetail ? {code: courseDetail.code, name: courseDetail.name} : "";
+              }
+              return prefCode;
+            });
+            setApplication(parsedData);
           } catch (e) {
             console.error("Error parsing application data", e);
           }
@@ -252,8 +272,8 @@ function ApplicationSuccessContent() {
                       <td className="py-1.5 px-3">{application?.religion || getFromSession('religion', "")}</td>
                     </tr>
                     <tr className="border-b">
-                      <td className="py-1.5 px-3 font-medium bg-gray-50">Ration Card No:</td>
-                      <td className="py-1.5 px-3">{application?.ration_card_no || getFromSession('ration_card_no', "")}</td>
+                      <td className="py-1.5 px-3 font-medium bg-gray-50">Register Number:</td>
+                      <td className="py-1.5 px-3">{application?.register_number || getFromSession('register_number', "")}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -706,11 +726,17 @@ function ApplicationSuccessContent() {
           body {
             font-size: 10px !important;
             line-height: 1.2 !important;
+            background: white !important;
+            color: black !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           .print-container {
             padding: 0.5rem !important;
             max-width: 100% !important;
             margin: 0 !important;
+            background: white !important;
+            color: black !important;
           }
           .space-y-4 > * + * {
             margin-top: 0.35rem !important;
@@ -718,23 +744,32 @@ function ApplicationSuccessContent() {
           td, th {
             padding-top: 0.1rem !important;
             padding-bottom: 0.1rem !important;
+            background: white !important;
+            color: black !important;
+            border-color: #e5e7eb !important;
           }
           h3, h4 {
             font-size: 0.7rem !important;
             margin: 0 !important;
             padding-top: 0.1rem !important;
             padding-bottom: 0.1rem !important;
+            color: black !important;
           }
           p {
             margin: 0 !important;
+            color: black !important;
           }
           .border-rounded-md {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+            background: white !important;
+            border-color: #e5e7eb !important;
           }
           table {
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+            background: white !important;
+            border-color: #e5e7eb !important;
           }
           .print:break-before-avoid {
             break-before: avoid !important;
@@ -745,13 +780,32 @@ function ApplicationSuccessContent() {
           .grid {
             grid-gap: 0.15rem !important;
           }
-          .bg-green-500, .bg-gray-300, .bg-gray-50, .bg-gray-100 {
+          .bg-green-500 {
+            background-color: #22c55e !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .bg-gray-300 {
+            background-color: #d1d5db !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .bg-gray-50 {
+            background-color: #f9fafb !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .bg-gray-100 {
+            background-color: #f3f4f6 !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
           .bg-blue-50 {
+            background-color: #eff6ff !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
           .inline-block.w-3.h-3 {
             width: 0.5rem !important;
@@ -762,6 +816,47 @@ function ApplicationSuccessContent() {
           }
           .overflow-hidden {
             overflow: visible !important;
+          }
+          /* Force white background for all elements */
+          * {
+            background-color: white !important;
+            color: black !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          /* Specific overrides for colored elements */
+          .bg-blue-50, .bg-gray-50, .bg-gray-100 {
+            background-color: #f9fafb !important;
+          }
+          .text-blue-800 {
+            color: black !important;
+          }
+          .text-green-800 {
+            color: black !important;
+          }
+          .text-gray-600 {
+            color: black !important;
+          }
+          .text-gray-700 {
+            color: black !important;
+          }
+          .text-gray-800 {
+            color: black !important;
+          }
+          .border {
+            border-color: #e5e7eb !important;
+          }
+          .border-b {
+            border-bottom-color: #e5e7eb !important;
+          }
+          .border-t {
+            border-top-color: #e5e7eb !important;
+          }
+          .border-l {
+            border-left-color: #e5e7eb !important;
+          }
+          .border-r {
+            border-right-color: #e5e7eb !important;
           }
         }
         @media screen {

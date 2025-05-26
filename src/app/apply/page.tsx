@@ -291,15 +291,16 @@ export default function ApplyPage() {
 
     // First update the form data as before
     if (name === 'register_number') {
-      // When register number changes, update the form data and trigger validation
+      // Only allow numeric input and limit to 6 digits
+      const numericValue = value.replace(/[^0-9]/g, '').slice(0, 6);
       setFormData({
         ...formData,
-        [name]: value,
+        [name]: numericValue,
       });
       // Only validate if there's actual content
-      if (value.trim()) {
+      if (numericValue) {
         console.log("Register number changed, triggering validation");
-        debouncedCheckRegisterNumber(value);
+        debouncedCheckRegisterNumber(numericValue);
       } else {
         setRegisterNumberError(null);
       }
@@ -424,6 +425,15 @@ export default function ApplyPage() {
     
     // Clear previous error for this field
     delete errors[name];
+    
+    // Register number validation
+    if (name === 'register_number') {
+      if (value.trim() === '') {
+        errors[name] = 'Register number is required';
+      } else if (!/^\d{6}$/.test(value)) {
+        errors[name] = 'Register number must be exactly 6 digits';
+      }
+    }
     
     // Mobile number validation
     if (name === 'mobile_number' || name === 'whatsapp_number' || name === 'google_pay_number') {
@@ -936,19 +946,21 @@ export default function ApplyPage() {
                     value={formData.register_number}
                     onChange={handleInputChange}
                     className={`w-full px-3 py-2 border ${
-                      registerNumberError 
+                      registerNumberError || validationErrors['register_number']
                         ? 'border-red-500' 
                         : formData.register_number.trim() && !isCheckingRegisterNumber && !registerNumberError 
                           ? 'border-green-500' 
                           : 'border-gray-300'
                     } rounded-md focus:outline-none focus:ring-1 ${
-                      registerNumberError 
+                      registerNumberError || validationErrors['register_number']
                         ? 'focus:ring-red-500' 
                         : formData.register_number.trim() && !isCheckingRegisterNumber && !registerNumberError 
                           ? 'focus:ring-green-500' 
                           : 'focus:ring-blue-500'
                     }`}
-                    placeholder="Enter your Register number"
+                    placeholder="Enter 6-digit Register number"
+                    maxLength={6}
+                    pattern="\d{6}"
                     required
                   />
                   {isCheckingRegisterNumber && (
@@ -957,7 +969,10 @@ export default function ApplyPage() {
                   {registerNumberError && (
                     <p className="text-sm text-red-500 mt-1">{registerNumberError}</p>
                   )}
-                  {formData.register_number.trim() && !isCheckingRegisterNumber && !registerNumberError && (
+                  {validationErrors['register_number'] && (
+                    <p className="text-sm text-red-500 mt-1">{validationErrors['register_number']}</p>
+                  )}
+                  {formData.register_number.trim() && !isCheckingRegisterNumber && !registerNumberError && !validationErrors['register_number'] && (
                     <p className="text-sm text-green-500 mt-1">Register number is valid and unique.</p>
                   )}
                 </div>

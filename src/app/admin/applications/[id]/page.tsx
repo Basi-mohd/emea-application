@@ -128,8 +128,8 @@ export default async function ApplicationDetail({
                     </div>
 
                     <div className="flex justify-between py-2 border-b">
-                      <span className="font-medium text-gray-600">Ration Card No:</span>
-                      <span>{application.ration_card_no}</span>
+                      <span className="font-medium text-gray-600">Register Number:</span>
+                      <span>{application.register_number}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b">
                       <span className="font-medium text-gray-600">Mobile Number:</span>
