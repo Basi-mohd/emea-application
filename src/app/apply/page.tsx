@@ -292,7 +292,7 @@ export default function ApplyPage() {
     // First update the form data as before
     if (name === 'register_number') {
       // Only allow numeric input and limit to 6 digits
-      const numericValue = value.replace(/[^0-9]/g, '').slice(0, 6);
+      const numericValue = value.replace(/[^0-9]/g, '').slice(0, 8);
       setFormData({
         ...formData,
         [name]: numericValue,
@@ -430,8 +430,8 @@ export default function ApplyPage() {
     if (name === 'register_number') {
       if (value.trim() === '') {
         errors[name] = 'Register number is required';
-      } else if (!/^\d{6}$/.test(value)) {
-        errors[name] = 'Register number must be exactly 6 digits';
+      } else if (!/^\d{8}$/.test(value)) {
+        errors[name] = 'Register number must be exactly 8 digits';
       }
     }
     
@@ -958,9 +958,9 @@ export default function ApplyPage() {
                           ? 'focus:ring-green-500' 
                           : 'focus:ring-blue-500'
                     }`}
-                    placeholder="Enter 6-digit Register number"
-                    maxLength={6}
-                    pattern="\d{6}"
+                    placeholder="Enter 8-digit Register number"
+                    maxLength={8}
+                    pattern="\d{8}"
                     required
                   />
                   {isCheckingRegisterNumber && (
