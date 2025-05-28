@@ -88,8 +88,7 @@ export default async function ApplicationDetail({
                 EMEAHSS, KONDOTTY, THURAKKAL P.O.
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Contact: e-mail:principalemeahss@gmail.com, Mob:9447362750,
-                9446526303, 9961988004
+                Contact: e-mail:principalemeahss@gmail.com, Phone : 04832714450
               </p>
               <h2 className="text-lg font-semibold mt-4">
                 APPLICATION FOR PLUS ONE ADMISSION 2025-26(COMMUNITY QUOTA)
