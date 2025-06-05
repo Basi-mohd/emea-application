@@ -2,8 +2,19 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Define admission status
+const ADMISSION_STATUS = "Closed";
+
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+
+  // Block access to application routes if admissions are closed
+  if (ADMISSION_STATUS === "Closed" && (
+    req.nextUrl.pathname.startsWith('/apply') ||
+    req.nextUrl.pathname.startsWith('/api/applications')
+  )) {
+    return NextResponse.redirect(new URL('/', req.url));
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

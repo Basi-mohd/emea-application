@@ -626,7 +626,6 @@ export default function ApplyPage() {
 
       // Call the server action to submit the application
       const { data, error, application_number } = await submitApplication(submissionPayload);
-
       if (error) {
         console.error("Error submitting application:", error);
         // Check for unique constraint violation on application_number

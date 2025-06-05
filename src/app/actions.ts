@@ -179,6 +179,7 @@ export const submitApplication = async (submissionData: any) => {
     return { data: null, error: maxError, application_number: undefined };
   }
 
+  console.log("Max Data: ", maxData);
   let nextApplicationNumber = 101;
   if (maxData && maxData.application_number) {
     nextApplicationNumber = Number(maxData.application_number) + 1;
@@ -186,6 +187,7 @@ export const submitApplication = async (submissionData: any) => {
       nextApplicationNumber = 101;
     }
   }
+  console.log("Application submitted successfully: ", nextApplicationNumber);
 
   // 2. Add the generated application_number to the submission data
   const dataToInsert = {
@@ -199,6 +201,7 @@ export const submitApplication = async (submissionData: any) => {
     .insert([dataToInsert])
     .select()
     .single(); // Assuming we expect one row back after insert
+
 
   if (error) {
     console.error("Error inserting application:", error);

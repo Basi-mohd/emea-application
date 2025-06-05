@@ -3,7 +3,7 @@ import { ArrowUpRight, Check, BookOpen } from "lucide-react";
 
 export default function Hero() {
   // This would typically come from a database or CMS
-  const admissionStatus = "Open"; // Can be "Open" or "Closed"
+  const admissionStatus = "Closed"; // Can be "Open" or "Closed"
 
   return (
     <div className="relative overflow-hidden bg-white h-screen flex justify-center items-center">
