@@ -762,7 +762,7 @@ export default function ApplyPage() {
               Contact: e-mail:principalemeahss@gmail.com, Phone : 04832714450
             </p>
             <h2 className="text-lg font-semibold mt-4">
-              APPLICATION FOR PLUS ONE ADMISSION 2025-26(COMMUNITY QUOTA)
+              APPLICATION FOR PLUS ONE ADMISSION 2026-27(COMMUNITY QUOTA)
             </h2>
           </div>
 
@@ -991,9 +991,9 @@ export default function ApplyPage() {
                     required
                   >
                     <option value="">Select Year</option>
+                    <option value="2026">2026</option>
                     <option value="2025">2025</option>
                     <option value="2024">2024</option>
-                    <option value="2023">2023</option>
                   </select>
                 </div>
 
@@ -1087,6 +1087,8 @@ export default function ApplyPage() {
                     name="date_of_birth"
                     value={formData.date_of_birth}
                     onChange={handleInputChange}
+                    min="2008-01-01"
+                    max="2013-12-31"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                     required
                   />

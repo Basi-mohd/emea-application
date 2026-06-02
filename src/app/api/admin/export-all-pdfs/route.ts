@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
         
         // Add header
         addCenteredText('EMEAHSS, KONDOTTY, THURAKKAL P.O.', helveticaBold, 14);
-        addCenteredText('APPLICATION FOR PLUS ONE ADMISSION 2025-26(COMMUNITY QUOTA)', helveticaBold, 12);
+        addCenteredText('APPLICATION FOR PLUS ONE ADMISSION 2026-27(COMMUNITY QUOTA)', helveticaBold, 12);
         
         // Add submission date and application number
         page.drawText(`Application Number: ${application.application_number || 'N/A'}`, {

@@ -8,8 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "EMEA Community Quota Plus One Admission 2025-26",
-  description: "EMEA Community Quota Plus One Admission 2025-26",
+  title: "EMEA Community Quota Plus One Admission 2026-27",
+  description: "EMEA Community Quota Plus One Admission 2026-27",
 };
 
 export default function RootLayout({

@@ -114,7 +114,7 @@ export default function PrintApplication({
             Contact: e-mail:principalemeahss@gmail.com, Phone : 04832714450
           </p>
           <h2 className="text-lg font-semibold mt-2 print-compact">
-            APPLICATION FOR PLUS ONE ADMISSION 2025-26(COMMUNITY QUOTA)
+            APPLICATION FOR PLUS ONE ADMISSION 2026-27(COMMUNITY QUOTA)
           </h2>
         </div>
 
