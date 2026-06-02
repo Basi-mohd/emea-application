@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
   // Block access to application routes if admissions are closed
-  if (ADMISSION_STATUS === "Closed" && (
+  if (ADMISSION_STATUS !== "Open" && (
     req.nextUrl.pathname.startsWith('/apply') ||
     req.nextUrl.pathname.startsWith('/api/applications')
   )) {
