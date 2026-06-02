@@ -86,6 +86,8 @@ interface FormData {
     little_kites: boolean;
     jrc: boolean;
     nss: boolean;
+    lss: boolean;
+    uss: boolean;
     clubs_count: number;
   };
   declaration: boolean;
@@ -186,6 +188,8 @@ export default function ApplyPage() {
         little_kites: false,
         jrc: false,
         nss: false,
+        lss: false,
+        uss: false,
         clubs_count: 0,
       },
       declaration: false,
@@ -2291,6 +2295,32 @@ export default function ApplyPage() {
                     />
                     <label htmlFor="nss" className="ml-2 text-sm text-gray-700">
                       NSS
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="lss"
+                      name="eligibility.lss"
+                      type="checkbox"
+                      checked={formData.eligibility.lss}
+                      onChange={handleInputChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="lss" className="ml-2 text-sm text-gray-700">
+                      LSS
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      id="uss"
+                      name="eligibility.uss"
+                      type="checkbox"
+                      checked={formData.eligibility.uss}
+                      onChange={handleInputChange}
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="uss" className="ml-2 text-sm text-gray-700">
+                      USS
                     </label>
                   </div>
                 </div>

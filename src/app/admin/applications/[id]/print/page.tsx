@@ -427,6 +427,20 @@ export default function PrintApplication({
                           </div>
                         </td>
                       </tr>
+                      <tr>
+                        <td className="py-1">
+                          <div className="flex items-center">
+                            <span className={`inline-block w-3 h-3 mr-1 rounded-full ${application?.eligibility?.lss ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                            <span>LSS</span>
+                          </div>
+                        </td>
+                        <td className="py-1">
+                          <div className="flex items-center">
+                            <span className={`inline-block w-3 h-3 mr-1 rounded-full ${application?.eligibility?.uss ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                            <span>USS</span>
+                          </div>
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
