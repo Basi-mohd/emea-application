@@ -320,8 +320,46 @@ export default function ApplyPage() {
         ...formData,
         eligibility: {
           ...formData.eligibility,
-          clubs_count: value === '' ? 0 : parseInt(value),
+          clubs_count: value === '' ? '' : parseInt(value),
+        }
+      });
+    } else if (name.startsWith("sports_district.")) {
+      const gradeType = name.split(".")[1];
+      setFormData({
+        ...formData,
+        sports_district: {
+          ...formData.sports_district,
+          [gradeType]: value === '' ? '' : parseInt(value),
         },
+      });
+    } else if (name.startsWith("kalolsavam_district.")) {
+      const gradeType = name.split(".")[1];
+      setFormData({
+        ...formData,
+        kalolsavam_district: {
+          ...formData.kalolsavam_district,
+          [gradeType]: value === '' ? '' : parseInt(value),
+        },
+      });
+    } else if (name.startsWith("co_curricular.")) {
+      const parts = name.split(".");
+      const fair = parts[1] as keyof typeof formData.co_curricular;
+      const grade = parts[2] as keyof (typeof formData.co_curricular)[typeof fair];
+      
+      setFormData({
+        ...formData,
+        co_curricular: {
+          ...formData.co_curricular,
+          [fair]: {
+            ...formData.co_curricular[fair],
+            [grade]: value === '' ? '' : parseInt(value),
+          },
+        },
+      });
+    } else if (name === 'sports_state_participation' || name === 'kalolsavam_state_participation') {
+      setFormData({
+        ...formData,
+        [name]: value === '' ? '' : parseInt(value),
       });
     } else if (type === "checkbox") {
       if (name.startsWith("ncc_type.")) {
@@ -366,39 +404,6 @@ export default function ApplyPage() {
           [subject]: value,
         },
       });
-    } else if (name.startsWith("sports_district.")) {
-      const gradeType = name.split(".")[1];
-      setFormData({
-        ...formData,
-        sports_district: {
-          ...formData.sports_district,
-          [gradeType]: value === '' ? 0 : parseInt(value),
-        },
-      });
-    } else if (name.startsWith("kalolsavam_district.")) {
-      const gradeType = name.split(".")[1];
-      setFormData({
-        ...formData,
-        kalolsavam_district: {
-          ...formData.kalolsavam_district,
-          [gradeType]: value === '' ? 0 : parseInt(value),
-        },
-      });
-    } else if (name.startsWith("co_curricular.")) {
-      const parts = name.split(".");
-      const fair = parts[1] as keyof typeof formData.co_curricular;
-      const grade = parts[2] as keyof typeof formData.co_curricular[typeof fair];
-      
-      setFormData({
-        ...formData,
-        co_curricular: {
-          ...formData.co_curricular,
-          [fair]: {
-            ...formData.co_curricular[fair],
-            [grade]: value === '' ? 0 : parseInt(value),
-          },
-        },
-      });
     } else if (name.startsWith("course_preferences")) {
       const index = parseInt(name.split("[")[1]);
       const newPreferences = [...formData.course_preferences];
@@ -406,11 +411,6 @@ export default function ApplyPage() {
       setFormData({
         ...formData,
         course_preferences: newPreferences,
-      });
-    } else if (name === 'sports_state_participation' || name === 'kalolsavam_state_participation') {
-      setFormData({
-        ...formData,
-        [name]: value === '' ? 0 : parseInt(value),
       });
     } else {
       setFormData({
@@ -617,14 +617,28 @@ export default function ApplyPage() {
         },
         sports_participation: {
           state_level: parseInt(typeof dataWithoutDeclaration.sports_state_participation === 'string' ? dataWithoutDeclaration.sports_state_participation : dataWithoutDeclaration.sports_state_participation.toString()) || 0,
-          district_level: dataWithoutDeclaration.sports_district,
+          district_level: Object.fromEntries(
+            Object.entries(dataWithoutDeclaration.sports_district || {}).map(([k, v]) => [k, v === '' ? 0 : v])
+          ),
         },
         kalolsavam_participation: {
           state_level: parseInt(typeof dataWithoutDeclaration.kalolsavam_state_participation === 'string' ? dataWithoutDeclaration.kalolsavam_state_participation : dataWithoutDeclaration.kalolsavam_state_participation.toString()) || 0,
-          district_level: dataWithoutDeclaration.kalolsavam_district,
+          district_level: Object.fromEntries(
+            Object.entries(dataWithoutDeclaration.kalolsavam_district || {}).map(([k, v]) => [k, v === '' ? 0 : v])
+          ),
         },
-        co_curricular_activities: dataWithoutDeclaration.co_curricular,
-        eligibility: dataWithoutDeclaration.eligibility,
+        co_curricular_activities: Object.fromEntries(
+          Object.entries(dataWithoutDeclaration.co_curricular || {}).map(([fair, grades]) => [
+            fair,
+            Object.fromEntries(
+              Object.entries(grades as Record<string, any>).map(([g, v]) => [g, v === '' ? 0 : v])
+            ),
+          ])
+        ),
+        eligibility: {
+          ...dataWithoutDeclaration.eligibility,
+          clubs_count: dataWithoutDeclaration.eligibility?.clubs_count === '' ? 0 : dataWithoutDeclaration.eligibility?.clubs_count,
+        },
         national_state_test: dataWithoutDeclaration.national_state_test,
       };
 
