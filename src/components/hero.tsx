@@ -25,8 +25,8 @@ export default function Hero() {
                 Kondotty
               </span>
             </h1>
-            <p className="text-gray-600 mb-8">
-            PLUS ONE ADMISSION 2026-27(COMMUNITY QUOTA)
+            <p className="text-blue-700 text-2xl font-bold mb-8">
+            PLUS ONE COMMUNITY QUOTA ADMISSION 2026-27
             </p>
             <div className="mb-8 flex justify-center">
               <div
