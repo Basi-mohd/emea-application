@@ -773,7 +773,7 @@ export default function ApplyPage() {
           {/* Payment Instructions */}
           <div className="p-4 bg-amber-50 border border-amber-200 mx-8 mt-4 rounded-lg">
             <p className={`text-amber-800 text-center font-medium ${anekMalayalam.className}`}>
-              അപേക്ഷ ഫീസായ 30 രൂപ 9495478452 (Rajan Varghese) എന്ന നമ്പറിൽ ഗൂഗിൾ പേ ചെയ്തതിനു ശേഷം അപേക്ഷ സമർപ്പിക്കുക. അവസാന തീയതി ജൂൺ 5 - പ്രിൻസിപ്പൽ
+              അപേക്ഷ ഫീസായ 50 രൂപ 98465 63093 (Mohammed Rishan) / 9447443573 (Faizal k) എന്ന നമ്പറിൽ ഗൂഗിൾ പേ ചെയ്തതിനു ശേഷം അപേക്ഷ സമർപ്പിക്കുക. അവസാന തീയതി ജൂൺ 18 - പ്രിൻസിപ്പൽ
             </p>
           </div>
 
@@ -2254,7 +2254,7 @@ export default function ApplyPage() {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                   (f) (Tick checkboxes if eligible)
                 </h3>
-                <div className="flex items-center space-x-6 mb-4">
+                <div className="flex items-center space-x-6 mb-4 flex-wrap gap-y-2">
                   <div className="flex items-center">
                     <input
                       id="little_kites"
