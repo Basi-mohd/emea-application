@@ -320,7 +320,7 @@ export default function ApplyPage() {
         ...formData,
         eligibility: {
           ...formData.eligibility,
-          clubs_count: value === '' ? '' : parseInt(value),
+          clubs_count: value === '' ? 0 : parseInt(value),
         }
       });
     } else if (name.startsWith("sports_district.")) {
