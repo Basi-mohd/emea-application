@@ -635,10 +635,7 @@ export default function ApplyPage() {
             ),
           ])
         ),
-        eligibility: {
-          ...dataWithoutDeclaration.eligibility,
-          clubs_count: dataWithoutDeclaration.eligibility?.clubs_count === '' ? 0 : dataWithoutDeclaration.eligibility?.clubs_count,
-        },
+        eligibility: dataWithoutDeclaration.eligibility,
         national_state_test: dataWithoutDeclaration.national_state_test,
       };
 
