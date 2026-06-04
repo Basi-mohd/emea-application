@@ -786,7 +786,7 @@ export default function ApplyPage() {
 
           {/* Payment Instructions */}
           <div className="p-4 bg-green-50 border border-green-200 mx-8 mt-4 rounded-lg">
-            <p className={`text-green-700 text-base text-center font-semibold ${anekMalayalam.className}`}>
+            <p className={`text-green-700 text-lg text-center font-semibold ${anekMalayalam.className}`}>
               അപേക്ഷ ഫീസായ 50 രൂപ 98465 63093 (Mohammed Rishan) / 9447443573 (Faizal k) എന്ന നമ്പറിൽ ഗൂഗിൾ പേ ചെയ്തതിനു ശേഷം അപേക്ഷ സമർപ്പിക്കുക. അവസാന തീയതി ജൂൺ 18 - പ്രിൻസിപ്പൽ
             </p>
           </div>
