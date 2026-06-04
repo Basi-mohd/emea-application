@@ -88,7 +88,7 @@ interface FormData {
     nss: boolean;
     lss: boolean;
     uss: boolean;
-    clubs_count: number;
+    clubs_count: number | string;
   };
   declaration: boolean;
   sslc_grades: {
@@ -320,7 +320,7 @@ export default function ApplyPage() {
         ...formData,
         eligibility: {
           ...formData.eligibility,
-          clubs_count: value === '' ? 0 : parseInt(value),
+          clubs_count: value === '' ? '' : parseInt(value),
         }
       });
     } else if (name.startsWith("sports_district.")) {
@@ -635,7 +635,10 @@ export default function ApplyPage() {
             ),
           ])
         ),
-        eligibility: dataWithoutDeclaration.eligibility,
+        eligibility: {
+          ...dataWithoutDeclaration.eligibility,
+          clubs_count: dataWithoutDeclaration.eligibility?.clubs_count === '' || dataWithoutDeclaration.eligibility?.clubs_count === undefined ? 0 : Number(dataWithoutDeclaration.eligibility.clubs_count),
+        },
         national_state_test: dataWithoutDeclaration.national_state_test,
       };
 
@@ -782,8 +785,8 @@ export default function ApplyPage() {
           </div>
 
           {/* Payment Instructions */}
-          <div className="p-4 bg-amber-50 border border-amber-200 mx-8 mt-4 rounded-lg">
-            <p className={`text-amber-800 text-center font-medium ${anekMalayalam.className}`}>
+          <div className="p-4 bg-green-50 border border-green-200 mx-8 mt-4 rounded-lg">
+            <p className={`text-green-700 text-base text-center font-semibold ${anekMalayalam.className}`}>
               അപേക്ഷ ഫീസായ 50 രൂപ 98465 63093 (Mohammed Rishan) / 9447443573 (Faizal k) എന്ന നമ്പറിൽ ഗൂഗിൾ പേ ചെയ്തതിനു ശേഷം അപേക്ഷ സമർപ്പിക്കുക. അവസാന തീയതി ജൂൺ 18 - പ്രിൻസിപ്പൽ
             </p>
           </div>
