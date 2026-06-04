@@ -62,25 +62,25 @@ interface FormData {
   dependent_jawans_service: boolean;
   sports_state_participation: number | string;
   sports_district: {
-    a_grade: number;
-    b_grade: number;
-    c_grade: number;
-    participation: number;
+    a_grade: number | string;
+    b_grade: number | string;
+    c_grade: number | string;
+    participation: number | string;
   };
   kalolsavam_state_participation: number | string;
   kalolsavam_district: {
-    a_grade: number;
-    b_grade: number;
-    c_grade: number;
-    participation: number;
+    a_grade: number | string;
+    b_grade: number | string;
+    c_grade: number | string;
+    participation: number | string;
   };
   national_state_test: boolean;
   co_curricular: {
-    state_science_fair: { a: number; b: number; c: number; d: number; e: number };
-    state_social_science_fair: { a: number; b: number; c: number; d: number; e: number };
-    state_maths_fair: { a: number; b: number; c: number; d: number; e: number };
-    state_it_fest: { a: number; b: number; c: number; d: number; e: number };
-    state_work_experience_fair: { a: number; b: number; c: number; d: number; e: number };
+    state_science_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_social_science_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_maths_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_it_fest: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_work_experience_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
   };
   eligibility: {
     little_kites: boolean;
