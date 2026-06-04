@@ -205,10 +205,6 @@ export default function PrintApplication({
                       <td className="py-1.5 px-3 font-medium bg-gray-50 w-1/3">House:</td>
                       <td className="py-1.5 px-3">{application.house_name}</td>
                     </tr>
-                    <tr>
-                      <td className="py-1.5 px-3 font-medium bg-gray-50">Address:</td>
-                      <td className="py-1.5 px-3">{application.permanent_address}</td>
-                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -418,12 +414,6 @@ export default function PrintApplication({
                           <div className="flex items-center">
                             <span className={`inline-block w-3 h-3 mr-1 rounded-full ${application?.eligibility?.jrc ? 'bg-green-500' : 'bg-gray-300'}`}></span>
                             <span>JRC</span>
-                          </div>
-                        </td>
-                        <td className="py-1">
-                          <div className="flex items-center">
-                            <span className={`inline-block w-3 h-3 mr-1 rounded-full ${application?.eligibility?.nss ? 'bg-green-500' : 'bg-gray-300'}`}></span>
-                            <span>NSS</span>
                           </div>
                         </td>
                       </tr>

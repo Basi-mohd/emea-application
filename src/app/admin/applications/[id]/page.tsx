@@ -195,11 +195,6 @@ export default async function ApplicationDetail({
                     Permanent Address
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="font-medium">Address:</div>
-                    <div className="md:col-span-2">
-                      {application.permanent_address}
-                    </div>
-
                     <div className="font-medium">House Name:</div>
                     <div className="md:col-span-2">
                       {application.house_name}

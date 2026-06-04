@@ -85,7 +85,6 @@ interface FormData {
   eligibility: {
     little_kites: boolean;
     jrc: boolean;
-    nss: boolean;
     lss: boolean;
     uss: boolean;
     clubs_count: number | string;
@@ -187,7 +186,6 @@ export default function ApplyPage() {
       eligibility: {
         little_kites: false,
         jrc: false,
-        nss: false,
         lss: false,
         uss: false,
         clubs_count: 0,
@@ -469,7 +467,7 @@ export default function ApplyPage() {
       'mobile_number', 'whatsapp_number',
       'qualifying_exam', 'register_number', 'exam_year', 'school_name',
       'gender', 'religion', 'date_of_birth', 'mother_name', 'father_name',
-      'permanent_address', 'house_name', 'post_office', 'taluk',
+      'house_name', 'post_office', 'taluk',
       'panchayath_municipality', 'declaration'
     ];
     
@@ -496,7 +494,7 @@ export default function ApplyPage() {
       'mobile_number', 'whatsapp_number',
       'qualifying_exam', 'register_number', 'exam_year', 'school_name',
       'gender', 'religion', 'date_of_birth', 'mother_name', 'father_name',
-      'permanent_address', 'house_name', 'post_office', 'taluk',
+      'house_name', 'post_office', 'taluk',
       'panchayath_municipality'
     ];
     
@@ -1151,14 +1149,7 @@ export default function ApplyPage() {
                     </label>
                   </div>
                   <div className="md:col-span-2">
-                    <textarea
-                      name="permanent_address"
-                      value={formData.permanent_address}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      rows={2}
-                      required
-                    ></textarea>
+                    <p className="text-sm text-gray-700">{formData.permanent_address}</p>
                   </div>
 
                   <div className="md:col-span-1">
@@ -2296,19 +2287,6 @@ export default function ApplyPage() {
                     />
                     <label htmlFor="jrc" className="ml-2 text-sm text-gray-700">
                       JRC
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="nss"
-                      name="eligibility.nss"
-                      type="checkbox"
-                      checked={formData.eligibility.nss}
-                      onChange={handleInputChange}
-                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label htmlFor="nss" className="ml-2 text-sm text-gray-700">
-                      NSS
                     </label>
                   </div>
                   <div className="flex items-center">
