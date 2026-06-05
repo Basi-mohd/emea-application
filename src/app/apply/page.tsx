@@ -777,7 +777,7 @@ export default function ApplyPage() {
               EMEAHSS, KONDOTTY, THURAKKAL P.O.
             </h1>
             <p className="text-sm text-gray-600 mt-1">
-              Contact: e-mail:principalemeahss@gmail.com, Phone : 04832714450
+              Contact: e-mail:principalemea@gmail.com, Phone : 04832714450
             </p>
             <h2 className="text-lg font-semibold mt-4">
               APPLICATION FOR PLUS ONE ADMISSION 2026-27(COMMUNITY QUOTA)
