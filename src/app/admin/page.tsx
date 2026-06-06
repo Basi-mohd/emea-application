@@ -16,11 +16,21 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Download, Printer, Search, FileText, Loader2 } from "lucide-react";
+import { Download, Printer, Search, FileText, Loader2, Trash2, Eye } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@supabase/supabase-js";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Define application type
 interface Application {
@@ -67,6 +77,9 @@ export default function AdminPage() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteName, setDeleteName] = useState<string>("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Check authentication and fetch applications
   useEffect(() => {
@@ -122,6 +135,26 @@ export default function AdminPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchApplications();
+  };
+
+  // Handle delete
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/admin/applications/${deleteId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete");
+      setApplications((prev) => prev.filter((app) => app.id !== deleteId));
+    } catch (err) {
+      console.error("Delete error:", err);
+      setError("Failed to delete application");
+    } finally {
+      setIsDeleting(false);
+      setDeleteId(null);
+      setDeleteName("");
+    }
   };
 
   if (isLoading) {
@@ -260,8 +293,11 @@ export default function AdminPage() {
                             {new Date(app.created_at).toLocaleDateString()}
                           </td>
                           <td className="p-2">
-                            <div className="flex gap-2">
+                            <div className="flex gap-1.5">
                               <Link href={`/admin/applications/${app.id}`}>
+                                <Button size="sm" variant="outline">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
                               </Link>
                               <Link
                                 href={`/admin/applications/${app.id}/print`}
@@ -271,6 +307,17 @@ export default function AdminPage() {
                                   <Printer className="h-4 w-4" />
                                 </Button>
                               </Link>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-red-500 hover:text-red-700 hover:border-red-300"
+                                onClick={() => {
+                                  setDeleteId(app.id);
+                                  setDeleteName(app.applicant_name);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </td>
                         </tr>
@@ -289,6 +336,30 @@ export default function AdminPage() {
           </section>
         </div>
       </main>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => { if (!open) { setDeleteId(null); setDeleteName(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Application</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete the application of <strong>{deleteName}</strong>? This action cannot be undone and will permanently remove the record from the database.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
