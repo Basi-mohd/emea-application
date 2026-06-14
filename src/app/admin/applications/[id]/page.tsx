@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import DashboardNavbar from "@/components/dashboard-navbar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Printer, Download } from "lucide-react";
+import { ArrowLeft, Printer, Download, SquarePen } from "lucide-react";
 
 // Hardcoded admin credentials
 const ADMIN_EMAIL = "admin@emeahss.edu";
@@ -58,6 +58,16 @@ export default async function ApplicationDetail({
               Back to Admin Dashboard
             </Link>
             <div className="flex gap-2">
+              <Link href={`/admin/applications/${params.id}/edit`}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-1"
+                >
+                  <SquarePen className="h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
               <Link
                 href={`/admin/applications/${params.id}/print`}
                 target="_blank"

@@ -16,7 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Download, Printer, Search, FileText, Loader2, Trash2, Eye } from "lucide-react";
+import { Download, Printer, Search, FileText, Loader2, Trash2, Eye, SquarePen } from "lucide-react";
 import * as XLSX from 'xlsx';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -297,6 +297,11 @@ export default function AdminPage() {
                               <Link href={`/admin/applications/${app.id}`}>
                                 <Button size="sm" variant="outline">
                                   <Eye className="h-4 w-4" />
+                                </Button>
+                              </Link>
+                              <Link href={`/admin/applications/${app.id}/edit`}>
+                                <Button size="sm" variant="outline">
+                                  <SquarePen className="h-4 w-4" />
                                 </Button>
                               </Link>
                               <Link
