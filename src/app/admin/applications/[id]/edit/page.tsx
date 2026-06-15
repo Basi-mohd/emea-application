@@ -10,49 +10,6 @@ import { ArrowLeft, Save, Loader2 } from "lucide-react";
 
 const ADMIN_EMAIL = "admin@emeahss.edu";
 
-interface CoursePreference {
-  preference: number;
-  code: string;
-  name: string;
-}
-
-interface Application {
-  id: string;
-  created_at: string;
-  applicant_name: string;
-  register_number: string;
-  application_number?: number;
-  mobile_number: string;
-  whatsapp_number: string;
-  qualifying_exam: string;
-  exam_year: string;
-  school_name: string;
-  gender: string;
-  religion: string;
-  date_of_birth: string;
-  fee_paid: number;
-  google_pay_number: string;
-  payment_date: string;
-  exam_type: string;
-  permanent_address: string;
-  house_name: string;
-  post_office: string;
-  taluk: string;
-  panchayath_municipality: string;
-  mother_name: string;
-  father_name: string;
-  course_preferences: CoursePreference[];
-  subject_grades?: any;
-  bonus_points?: any;
-  sports_participation?: any;
-  kalolsavam_participation?: any;
-  national_state_test?: boolean;
-  co_curricular_activities?: any;
-  eligibility?: any;
-  cbse_marks?: any;
-  status?: string;
-}
-
 const courseOptions = [
   { code: "01", name: "Physics, Chemistry, Biology & Maths" },
   { code: "11", name: "History, Economics, Poli. Sci & Sociology" },
@@ -64,6 +21,118 @@ const courseOptions = [
   },
 ];
 
+const gradeOptions = ["A+", "A", "B+", "B", "C+", "C", "D+"];
+
+interface CoursePreference {
+  preference: number;
+  code: string;
+  name: string;
+}
+
+interface FlatFormData {
+  fee_paid: string;
+  google_pay_number: string;
+  payment_date: string;
+  applicant_name: string;
+  mobile_number: string;
+  whatsapp_number: string;
+  qualifying_exam: string;
+  register_number: string;
+  exam_year: string;
+  school_name: string;
+  gender: string;
+  religion: string;
+  date_of_birth: string;
+  mother_name: string;
+  father_name: string;
+  permanent_address: string;
+  house_name: string;
+  post_office: string;
+  taluk: string;
+  panchayath_municipality: string;
+  exam_type: string;
+  application_number: string;
+  status: string;
+
+  course_preferences: string[];
+
+  ncc_selected: boolean;
+  ncc_type: { ncc: boolean; scouts_guides: boolean; student_police_cadet: boolean };
+  dependent_jawans_killed: boolean;
+  dependent_jawans_service: boolean;
+
+  sports_state_participation: number | string;
+  sports_district: { a_grade: number | string; b_grade: number | string; c_grade: number | string; participation: number | string };
+
+  kalolsavam_state_participation: number | string;
+  kalolsavam_district: { a_grade: number | string; b_grade: number | string; c_grade: number | string; participation: number | string };
+
+  national_state_test: boolean;
+
+  co_curricular: {
+    state_science_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_social_science_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_maths_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_it_fest: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+    state_work_experience_fair: { a: number | string; b: number | string; c: number | string; d: number | string; e: number | string };
+  };
+
+  eligibility: {
+    little_kites: boolean;
+    jrc: boolean;
+    lss: boolean;
+    uss: boolean;
+    nmms: boolean;
+    clubs_count: number | string;
+  };
+
+  sslc_grades: {
+    english: string; language1: string; language2: string; hindi: string;
+    social_science: string; physics: string; chemistry: string; biology: string;
+    maths: string; information_technology: string;
+  };
+
+  cbse_marks: {
+    english: string; language: string; social_science: string; science: string; maths: string;
+  };
+}
+
+function defaultFlatFormData(): FlatFormData {
+  return {
+    fee_paid: "", google_pay_number: "", payment_date: "",
+    applicant_name: "", mobile_number: "", whatsapp_number: "",
+    qualifying_exam: "", register_number: "", exam_year: "", school_name: "",
+    gender: "", religion: "", date_of_birth: "",
+    mother_name: "", father_name: "",
+    permanent_address: "", house_name: "", post_office: "", taluk: "", panchayath_municipality: "",
+    exam_type: "sslc", application_number: "", status: "pending",
+    course_preferences: ["", "", ""],
+    ncc_selected: false,
+    ncc_type: { ncc: false, scouts_guides: false, student_police_cadet: false },
+    dependent_jawans_killed: false, dependent_jawans_service: false,
+    sports_state_participation: 0,
+    sports_district: { a_grade: 0, b_grade: 0, c_grade: 0, participation: 0 },
+    kalolsavam_state_participation: 0,
+    kalolsavam_district: { a_grade: 0, b_grade: 0, c_grade: 0, participation: 0 },
+    national_state_test: false,
+    co_curricular: {
+      state_science_fair: { a: 0, b: 0, c: 0, d: 0, e: 0 },
+      state_social_science_fair: { a: 0, b: 0, c: 0, d: 0, e: 0 },
+      state_maths_fair: { a: 0, b: 0, c: 0, d: 0, e: 0 },
+      state_it_fest: { a: 0, b: 0, c: 0, d: 0, e: 0 },
+      state_work_experience_fair: { a: 0, b: 0, c: 0, d: 0, e: 0 },
+    },
+    eligibility: { little_kites: false, jrc: false, lss: false, uss: false, nmms: false, clubs_count: 0 },
+    sslc_grades: {
+      english: "", language1: "", language2: "", hindi: "", social_science: "",
+      physics: "", chemistry: "", biology: "", maths: "", information_technology: "",
+    },
+    cbse_marks: {
+      english: "", language: "", social_science: "", science: "", maths: "",
+    },
+  };
+}
+
 export default function EditApplicationPage({
   params,
 }: {
@@ -71,14 +140,11 @@ export default function EditApplicationPage({
 }) {
   const router = useRouter();
   const supabase = createClient();
-  const [application, setApplication] = useState<Application | null>(null);
+  const [formData, setFormData] = useState<FlatFormData>(defaultFlatFormData());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
-
-  const [formData, setFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
     async function init() {
@@ -87,8 +153,6 @@ export default function EditApplicationPage({
         router.replace("/admin/login");
         return;
       }
-      setAuthChecked(true);
-
       const res = await fetch(`/api/applications/${params.id}`);
       if (!res.ok) {
         setError("Failed to load application");
@@ -96,20 +160,28 @@ export default function EditApplicationPage({
         return;
       }
       const data = await res.json();
-      setApplication(data);
       initializeForm(data);
       setLoading(false);
     }
     init();
   }, [params.id]);
 
-  function initializeForm(data: Application) {
-    const initial: Record<string, any> = {
+  function initializeForm(data: any) {
+    const bp = data.bonus_points || {};
+    const sp = data.sports_participation || {};
+    const kp = data.kalolsavam_participation || {};
+    const cc = data.co_curricular_activities || {};
+    const el = data.eligibility || {};
+
+    setFormData({
+      fee_paid: data.fee_paid?.toString() || "",
+      google_pay_number: data.google_pay_number || "",
+      payment_date: data.payment_date || "",
       applicant_name: data.applicant_name || "",
-      register_number: data.register_number || "",
       mobile_number: data.mobile_number || "",
       whatsapp_number: data.whatsapp_number || "",
       qualifying_exam: data.qualifying_exam || "",
+      register_number: data.register_number || "",
       exam_year: data.exam_year || "",
       school_name: data.school_name || "",
       gender: data.gender || "",
@@ -122,55 +194,107 @@ export default function EditApplicationPage({
       post_office: data.post_office || "",
       taluk: data.taluk || "",
       panchayath_municipality: data.panchayath_municipality || "",
-      exam_type: data.exam_type || "",
-      fee_paid: data.fee_paid?.toString() || "",
-      google_pay_number: data.google_pay_number || "",
-      payment_date: data.payment_date || "",
-      application_number: data.application_number || "",
+      exam_type: data.exam_type || "sslc",
+      application_number: data.application_number?.toString() || "",
       status: data.status || "pending",
+      course_preferences: (data.course_preferences || []).map((p: CoursePreference) => p.code),
+      ncc_selected: bp.ncc || false,
+      ncc_type: bp.ncc_type || { ncc: false, scouts_guides: false, student_police_cadet: false },
+      dependent_jawans_killed: bp.dependent_jawans_killed || false,
+      dependent_jawans_service: bp.dependent_jawans_service || false,
+      sports_state_participation: sp.state_level || 0,
+      sports_district: sp.district_level || { a_grade: 0, b_grade: 0, c_grade: 0, participation: 0 },
+      kalolsavam_state_participation: kp.state_level || 0,
+      kalolsavam_district: kp.district_level || { a_grade: 0, b_grade: 0, c_grade: 0, participation: 0 },
       national_state_test: data.national_state_test || false,
-      course_preferences: data.course_preferences || [],
-      subject_grades: JSON.stringify(data.subject_grades || null, null, 2),
-      cbse_marks: JSON.stringify(data.cbse_marks || null, null, 2),
-      bonus_points: JSON.stringify(data.bonus_points || null, null, 2),
-      sports_participation: JSON.stringify(data.sports_participation || null, null, 2),
-      kalolsavam_participation: JSON.stringify(data.kalolsavam_participation || null, null, 2),
-      co_curricular_activities: JSON.stringify(data.co_curricular_activities || null, null, 2),
-      eligibility: JSON.stringify(data.eligibility || null, null, 2),
-    };
-    setFormData(initial);
+      co_curricular: {
+        state_science_fair: cc.state_science_fair || { a: 0, b: 0, c: 0, d: 0, e: 0 },
+        state_social_science_fair: cc.state_social_science_fair || { a: 0, b: 0, c: 0, d: 0, e: 0 },
+        state_maths_fair: cc.state_maths_fair || { a: 0, b: 0, c: 0, d: 0, e: 0 },
+        state_it_fest: cc.state_it_fest || { a: 0, b: 0, c: 0, d: 0, e: 0 },
+        state_work_experience_fair: cc.state_work_experience_fair || { a: 0, b: 0, c: 0, d: 0, e: 0 },
+      },
+      eligibility: {
+        little_kites: el.little_kites || false,
+        jrc: el.jrc || false,
+        lss: el.lss || false,
+        uss: el.uss || false,
+        nmms: el.nmms || false,
+        clubs_count: el.clubs_count ?? 0,
+      },
+      sslc_grades: data.subject_grades || {
+        english: "", language1: "", language2: "", hindi: "", social_science: "",
+        physics: "", chemistry: "", biology: "", maths: "", information_technology: "",
+      },
+      cbse_marks: data.cbse_marks || {
+        english: "", language: "", social_science: "", science: "", maths: "",
+      },
+    });
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  }
 
-  function handleCoursePrefChange(index: number, value: string) {
-    const prefs = [...(formData.course_preferences || [])];
-    const course = courseOptions.find((c) => c.code === value);
-    if (index >= prefs.length) {
-      for (let i = prefs.length; i <= index; i++) {
-        prefs.push({ preference: i + 1, code: "", name: "" });
+    if (name === "register_number") {
+      setFormData((prev) => ({ ...prev, register_number: value.replace(/[^0-9]/g, "").slice(0, 8) }));
+    } else if (name === "applicant_name") {
+      setFormData((prev) => ({ ...prev, applicant_name: value.toUpperCase() }));
+    } else if (name === "eligibility.clubs_count") {
+      setFormData((prev) => ({
+        ...prev,
+        eligibility: { ...prev.eligibility, clubs_count: value === "" ? "" : parseInt(value) },
+      }));
+    } else if (name.startsWith("sports_district.")) {
+      const gradeType = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        sports_district: { ...prev.sports_district, [gradeType]: value === "" ? "" : parseInt(value) },
+      }));
+    } else if (name.startsWith("kalolsavam_district.")) {
+      const gradeType = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        kalolsavam_district: { ...prev.kalolsavam_district, [gradeType]: value === "" ? "" : parseInt(value) },
+      }));
+    } else if (name.startsWith("co_curricular.")) {
+      const parts = name.split(".");
+      const fair = parts[1] as keyof FlatFormData["co_curricular"];
+      const grade = parts[2] as string;
+      setFormData((prev) => ({
+        ...prev,
+        co_curricular: {
+          ...prev.co_curricular,
+          [fair]: { ...prev.co_curricular[fair], [grade]: value === "" ? "" : parseInt(value) },
+        },
+      }));
+    } else if (name === "sports_state_participation" || name === "kalolsavam_state_participation") {
+      setFormData((prev) => ({ ...prev, [name]: value === "" ? "" : parseInt(value) }));
+    } else if (type === "checkbox") {
+      if (name.startsWith("ncc_type.")) {
+        const nccType = name.split(".")[1] as keyof FlatFormData["ncc_type"];
+        setFormData((prev) => ({ ...prev, ncc_type: { ...prev.ncc_type, [nccType]: checked } }));
+      } else if (name.startsWith("eligibility.")) {
+        const elType = name.split(".")[1] as keyof FlatFormData["eligibility"];
+        setFormData((prev) => ({ ...prev, eligibility: { ...prev.eligibility, [elType]: checked } }));
+      } else {
+        setFormData((prev) => ({ ...prev, [name]: checked }));
       }
-    }
-    prefs[index] = {
-      preference: index + 1,
-      code: value,
-      name: course?.name || "",
-    };
-    setFormData((prev) => ({ ...prev, course_preferences: prefs }));
-  }
-
-  function parseJSONField(value: string): any {
-    try {
-      return value ? JSON.parse(value) : null;
-    } catch {
-      return value;
+    } else if (name.startsWith("sslc_grades.")) {
+      const subject = name.split(".")[1] as keyof FlatFormData["sslc_grades"];
+      setFormData((prev) => ({ ...prev, sslc_grades: { ...prev.sslc_grades, [subject]: value } }));
+    } else if (name.startsWith("cbse_marks.")) {
+      const subject = name.split(".")[1] as keyof FlatFormData["cbse_marks"];
+      setFormData((prev) => ({ ...prev, cbse_marks: { ...prev.cbse_marks, [subject]: value } }));
+    } else if (name.startsWith("course_preferences")) {
+      const index = parseInt(name.split("[")[1]);
+      setFormData((prev) => {
+        const newPrefs = [...prev.course_preferences];
+        newPrefs[index] = value;
+        return { ...prev, course_preferences: newPrefs };
+      });
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   }
 
@@ -180,12 +304,18 @@ export default function EditApplicationPage({
     setError(null);
     setSuccess(false);
 
-    const payload: Record<string, any> = {
+    const sp = formData.sports_state_participation;
+    const kp = formData.kalolsavam_state_participation;
+
+    const payload = {
+      fee_paid: parseFloat(formData.fee_paid) || 0,
+      google_pay_number: formData.google_pay_number,
+      payment_date: formData.payment_date,
       applicant_name: formData.applicant_name,
-      register_number: formData.register_number,
       mobile_number: formData.mobile_number,
       whatsapp_number: formData.whatsapp_number,
       qualifying_exam: formData.qualifying_exam,
+      register_number: formData.register_number,
       exam_year: formData.exam_year,
       school_name: formData.school_name,
       gender: formData.gender,
@@ -199,20 +329,50 @@ export default function EditApplicationPage({
       taluk: formData.taluk,
       panchayath_municipality: formData.panchayath_municipality,
       exam_type: formData.exam_type,
-      fee_paid: parseFloat(formData.fee_paid) || 0,
-      google_pay_number: formData.google_pay_number,
-      payment_date: formData.payment_date,
       application_number: formData.application_number ? parseInt(formData.application_number) : null,
       status: formData.status,
+      course_preferences: formData.course_preferences
+        .map((code, index) => {
+          const c = courseOptions.find((co) => co.code === code);
+          return { preference: index + 1, code, name: c ? c.name : "" };
+        })
+        .filter((p) => p.code),
+      subject_grades: formData.exam_type === "sslc" ? formData.sslc_grades : formData.cbse_marks,
+      cbse_marks: formData.exam_type === "cbse" ? formData.cbse_marks : null,
+      bonus_points: {
+        ncc: formData.ncc_selected,
+        ncc_type: formData.ncc_type,
+        dependent_jawans_killed: formData.dependent_jawans_killed,
+        dependent_jawans_service: formData.dependent_jawans_service,
+      },
+      sports_participation: {
+        state_level: parseInt((typeof sp === "string" ? sp : sp.toString())) || 0,
+        district_level: Object.fromEntries(
+          Object.entries(formData.sports_district).map(([k, v]) => [k, v === "" ? 0 : v]),
+        ),
+      },
+      kalolsavam_participation: {
+        state_level: parseInt((typeof kp === "string" ? kp : kp.toString())) || 0,
+        district_level: Object.fromEntries(
+          Object.entries(formData.kalolsavam_district).map(([k, v]) => [k, v === "" ? 0 : v]),
+        ),
+      },
+      co_curricular_activities: Object.fromEntries(
+        Object.entries(formData.co_curricular).map(([fair, grades]) => [
+          fair,
+          Object.fromEntries(
+            Object.entries(grades as Record<string, any>).map(([g, v]) => [g, v === "" ? 0 : v]),
+          ),
+        ]),
+      ),
+      eligibility: {
+        ...formData.eligibility,
+        clubs_count:
+          formData.eligibility.clubs_count === "" || formData.eligibility.clubs_count === undefined
+            ? 0
+            : Number(formData.eligibility.clubs_count),
+      },
       national_state_test: formData.national_state_test,
-      course_preferences: formData.course_preferences?.filter((p: CoursePreference) => p.code) || [],
-      subject_grades: parseJSONField(formData.subject_grades),
-      cbse_marks: parseJSONField(formData.cbse_marks),
-      bonus_points: parseJSONField(formData.bonus_points),
-      sports_participation: parseJSONField(formData.sports_participation),
-      kalolsavam_participation: parseJSONField(formData.kalolsavam_participation),
-      co_curricular_activities: parseJSONField(formData.co_curricular_activities),
-      eligibility: parseJSONField(formData.eligibility),
     };
 
     try {
@@ -226,7 +386,7 @@ export default function EditApplicationPage({
         throw new Error(err.error || "Failed to update");
       }
       setSuccess(true);
-      setTimeout(() => router.push(`/admin/applications/${params.id}`), 1500);
+      setTimeout(() => router.push("/admin"), 1500);
     } catch (err: any) {
       setError(err.message || "Failed to update application");
     } finally {
@@ -242,7 +402,7 @@ export default function EditApplicationPage({
     );
   }
 
-  if (error && !application) {
+  if (error && !formData.applicant_name) {
     return (
       <>
         <DashboardNavbar />
@@ -256,6 +416,9 @@ export default function EditApplicationPage({
     );
   }
 
+  const inputClass = "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500";
+  const labelClass = "block text-sm font-medium text-gray-700 mb-1";
+
   return (
     <>
       <DashboardNavbar />
@@ -267,13 +430,13 @@ export default function EditApplicationPage({
               Back to Admin Dashboard
             </Link>
             <div className="text-sm text-muted-foreground">
-              Application: {application?.application_number || application?.register_number}
+              Editing: {formData.applicant_name || formData.register_number}
             </div>
           </div>
 
           {success && (
             <div className="bg-green-50 text-green-700 p-4 rounded-md mb-6">
-              Application updated successfully! Redirecting...
+              Application updated successfully! Redirecting to admin dashboard...
             </div>
           )}
           {error && (
@@ -292,16 +455,16 @@ export default function EditApplicationPage({
                   <h3 className="text-lg font-medium mb-4 pb-2 border-b">Fee Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Fee Paid</label>
-                      <input type="number" name="fee_paid" value={formData.fee_paid} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>Fee Paid</label>
+                      <input type="number" name="fee_paid" value={formData.fee_paid} onChange={handleChange} className={inputClass} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Google Pay Number</label>
-                      <input type="text" name="google_pay_number" value={formData.google_pay_number} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>Google Pay Number</label>
+                      <input type="text" name="google_pay_number" value={formData.google_pay_number} onChange={handleChange} className={inputClass} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Payment Date</label>
-                      <input type="date" name="payment_date" value={formData.payment_date} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>Payment Date</label>
+                      <input type="date" name="payment_date" value={formData.payment_date} onChange={handleChange} className={inputClass} />
                     </div>
                   </div>
                 </section>
@@ -311,36 +474,36 @@ export default function EditApplicationPage({
                   <h3 className="text-lg font-medium mb-4 pb-2 border-b">Personal Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Application Number</label>
-                      <input type="number" name="application_number" value={formData.application_number} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>Application Number</label>
+                      <input type="number" name="application_number" value={formData.application_number} onChange={handleChange} className={inputClass} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Applicant Name</label>
-                      <input type="text" name="applicant_name" value={formData.applicant_name} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Applicant Name</label>
+                      <input type="text" name="applicant_name" value={formData.applicant_name} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Register Number</label>
-                      <input type="text" name="register_number" value={formData.register_number} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Register Number</label>
+                      <input type="text" name="register_number" value={formData.register_number} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
-                      <input type="tel" name="mobile_number" value={formData.mobile_number} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Mobile Number</label>
+                      <input type="tel" name="mobile_number" value={formData.mobile_number} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">WhatsApp Number</label>
-                      <input type="tel" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>WhatsApp Number</label>
+                      <input type="tel" name="whatsapp_number" value={formData.whatsapp_number} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Qualifying Exam</label>
-                      <select name="qualifying_exam" value={formData.qualifying_exam} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      <label className={labelClass}>Qualifying Exam</label>
+                      <select name="qualifying_exam" value={formData.qualifying_exam} onChange={handleChange} className={inputClass}>
                         <option value="">Select</option>
                         <option value="sslc">SSLC</option>
                         <option value="cbse">CBSE</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Exam Year</label>
-                      <select name="exam_year" value={formData.exam_year} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      <label className={labelClass}>Exam Year</label>
+                      <select name="exam_year" value={formData.exam_year} onChange={handleChange} className={inputClass}>
                         <option value="">Select Year</option>
                         <option value="2026">2026</option>
                         <option value="2025">2025</option>
@@ -348,11 +511,11 @@ export default function EditApplicationPage({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">School Name</label>
-                      <input type="text" name="school_name" value={formData.school_name} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>School Name</label>
+                      <input type="text" name="school_name" value={formData.school_name} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Gender</label>
+                      <label className={labelClass}>Gender</label>
                       <div className="flex space-x-4 mt-2">
                         <label className="flex items-center">
                           <input type="radio" name="gender" value="male" checked={formData.gender === "male"} onChange={handleChange} className="mr-1" /> Male
@@ -363,15 +526,15 @@ export default function EditApplicationPage({
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Religion</label>
-                      <select name="religion" value={formData.religion} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      <label className={labelClass}>Religion</label>
+                      <select name="religion" value={formData.religion} onChange={handleChange} className={inputClass}>
                         <option value="">Select Religion</option>
                         <option value="Islam">Islam</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-                      <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Date of Birth</label>
+                      <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleChange} className={inputClass} required />
                     </div>
                   </div>
                 </section>
@@ -381,12 +544,12 @@ export default function EditApplicationPage({
                   <h3 className="text-lg font-medium mb-4 pb-2 border-b">Parent Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Mother's Name</label>
-                      <input type="text" name="mother_name" value={formData.mother_name} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>Mother's Name</label>
+                      <input type="text" name="mother_name" value={formData.mother_name} onChange={handleChange} className={inputClass} />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Father's Name</label>
-                      <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>Father's Name</label>
+                      <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} className={inputClass} />
                     </div>
                   </div>
                 </section>
@@ -396,34 +559,34 @@ export default function EditApplicationPage({
                   <h3 className="text-lg font-medium mb-4 pb-2 border-b">Permanent Address</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">House Name</label>
-                      <input type="text" name="house_name" value={formData.house_name} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>House Name</label>
+                      <input type="text" name="house_name" value={formData.house_name} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Post Office</label>
-                      <input type="text" name="post_office" value={formData.post_office} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Post Office</label>
+                      <input type="text" name="post_office" value={formData.post_office} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Taluk</label>
-                      <input type="text" name="taluk" value={formData.taluk} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Taluk</label>
+                      <input type="text" name="taluk" value={formData.taluk} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Panchayath/Municipality</label>
-                      <input type="text" name="panchayath_municipality" value={formData.panchayath_municipality} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Panchayath/Municipality</label>
+                      <input type="text" name="panchayath_municipality" value={formData.panchayath_municipality} onChange={handleChange} className={inputClass} required />
                     </div>
                     <div className="md:col-span-3">
-                      <label className="block text-sm font-medium text-gray-700">Permanent Address</label>
-                      <textarea name="permanent_address" value={formData.permanent_address} onChange={handleChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500" required />
+                      <label className={labelClass}>Permanent Address</label>
+                      <textarea name="permanent_address" value={formData.permanent_address} onChange={handleChange} rows={3} className={inputClass} required />
                     </div>
                   </div>
                 </section>
 
-                {/* Academic Information */}
+                {/* Academic & Status */}
                 <section>
                   <h3 className="text-lg font-medium mb-4 pb-2 border-b">Academic Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Exam Type</label>
+                      <label className={labelClass}>Exam Type</label>
                       <div className="flex space-x-4 mt-2">
                         <label className="flex items-center">
                           <input type="radio" name="exam_type" value="sslc" checked={formData.exam_type === "sslc"} onChange={handleChange} className="mr-1" /> SSLC
@@ -434,14 +597,60 @@ export default function EditApplicationPage({
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Status</label>
-                      <select name="status" value={formData.status} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                      <label className={labelClass}>Status</label>
+                      <select name="status" value={formData.status} onChange={handleChange} className={inputClass}>
                         <option value="pending">Pending</option>
                         <option value="approved">Approved</option>
                         <option value="rejected">Rejected</option>
                       </select>
                     </div>
                   </div>
+                </section>
+
+                {/* Subject Grades */}
+                <section>
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">Grades obtained for the qualifying examination</h3>
+
+                  {formData.exam_type === "sslc" && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {Object.keys(formData.sslc_grades).map((subject) => (
+                        <div key={subject}>
+                          <label className={labelClass}>
+                            {subject.charAt(0).toUpperCase() + subject.slice(1).replace(/([a-z])(\d)/, "$1 $2")}
+                          </label>
+                          <select
+                            name={`sslc_grades.${subject}`}
+                            value={formData.sslc_grades[subject as keyof typeof formData.sslc_grades]}
+                            onChange={handleChange}
+                            className={inputClass}
+                          >
+                            <option value="">Select Grade</option>
+                            {gradeOptions.map((g) => <option key={g} value={g}>{g}</option>)}
+                          </select>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {formData.exam_type === "cbse" && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {Object.keys(formData.cbse_marks).map((subject) => (
+                        <div key={subject}>
+                          <label className={labelClass}>
+                            {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                          </label>
+                          <input
+                            type="number"
+                            name={`cbse_marks.${subject}`}
+                            value={(formData.cbse_marks as Record<string, string>)[subject]}
+                            onChange={handleChange}
+                            className={inputClass}
+                            min="0" max="100"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </section>
 
                 {/* Course Preferences */}
@@ -456,11 +665,10 @@ export default function EditApplicationPage({
                       <div className="col-span-1 pt-2">{idx + 1}</div>
                       <div className="col-span-5">
                         <select
-                          value={
-                            (formData.course_preferences as CoursePreference[])?.[idx]?.code || ""
-                          }
-                          onChange={(e) => handleCoursePrefChange(idx, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          name={`course_preferences[${idx}]`}
+                          value={formData.course_preferences[idx] || ""}
+                          onChange={handleChange}
+                          className={inputClass}
                         >
                           <option value="">Select code/subject</option>
                           {courseOptions.map((course) => (
@@ -474,43 +682,155 @@ export default function EditApplicationPage({
                   ))}
                 </section>
 
-                {/* JSON fields */}
+                {/* Bonus Points */}
                 <section>
-                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">Additional Data (JSON)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Subject Grades (SSLC) / CBSE Marks</label>
-                      {formData.exam_type === "cbse" ? (
-                        <textarea name="cbse_marks" value={formData.cbse_marks} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                      ) : (
-                        <textarea name="subject_grades" value={formData.subject_grades} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                      )}
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">
+                    Whether the applicant is eligible for bonus points under the following category
+                  </h3>
+                  <div className="flex items-center space-x-6 mb-4">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="ncc_selected" checked={formData.ncc_selected} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                      <span className="ml-2 text-sm text-gray-700">NCC Scout & Guides (Student Police Cadet or attached in Part)</span>
+                    </label>
+                  </div>
+                  {formData.ncc_selected && (
+                    <div className="ml-6 mb-4 space-y-2">
+                      {(["ncc", "scouts_guides", "student_police_cadet"] as const).map((type) => (
+                        <label key={type} className="flex items-center">
+                          <input type="checkbox" name={`ncc_type.${type}`} checked={formData.ncc_type[type]} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                          <span className="ml-2 text-sm text-gray-700">
+                            {type === "scouts_guides" ? "Scouts & Guides" : type === "student_police_cadet" ? "Student Police Cadet" : "NCC"}
+                          </span>
+                        </label>
+                      ))}
                     </div>
+                  )}
+                  <div className="flex items-center space-x-6 mb-2">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="dependent_jawans_killed" checked={formData.dependent_jawans_killed} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                      <span className="ml-2 text-sm text-gray-700">Dependent of Jawans killed in action</span>
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-6 mb-2">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="dependent_jawans_service" checked={formData.dependent_jawans_service} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                      <span className="ml-2 text-sm text-gray-700">Dependent of Jawans in Service or Ex-Service</span>
+                    </label>
+                  </div>
+                </section>
+
+                {/* Sports Participation */}
+                <section>
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">Participation in Sports</h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Bonus Points</label>
-                      <textarea name="bonus_points" value={formData.bonus_points} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>State Level Participation (Number of items participated)</label>
+                      <input type="number" name="sports_state_participation" value={formData.sports_state_participation} onChange={handleChange} className={inputClass} min="0" />
                     </div>
+                  </div>
+                  <h4 className="text-md font-medium text-gray-800 mb-2">District Level</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {(["a_grade", "b_grade", "c_grade", "participation"] as const).map((g) => (
+                      <div key={g}>
+                        <label className={labelClass}>{g === "a_grade" ? "A Grade" : g === "b_grade" ? "B Grade" : g === "c_grade" ? "C Grade" : "Participation"}</label>
+                        <input type="number" name={`sports_district.${g}`} value={formData.sports_district[g]} onChange={handleChange} className={inputClass} min="0" />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Kalolsavam Participation */}
+                <section>
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">Participation in Kerala School Kalolsavam</h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Sports Participation</label>
-                      <textarea name="sports_participation" value={formData.sports_participation} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                      <label className={labelClass}>State Level Participation (Number of items participated)</label>
+                      <input type="number" name="kalolsavam_state_participation" value={formData.kalolsavam_state_participation} onChange={handleChange} className={inputClass} min="0" />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Kalolsavam Participation</label>
-                      <textarea name="kalolsavam_participation" value={formData.kalolsavam_participation} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
+                  </div>
+                  <h4 className="text-md font-medium text-gray-800 mb-2">District Level</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {(["a_grade", "b_grade", "c_grade", "participation"] as const).map((g) => (
+                      <div key={g}>
+                        <label className={labelClass}>{g === "a_grade" ? "A Grade" : g === "b_grade" ? "B Grade" : g === "c_grade" ? "C Grade" : "Participation"}</label>
+                        <input type="number" name={`kalolsavam_district.${g}`} value={formData.kalolsavam_district[g]} onChange={handleChange} className={inputClass} min="0" />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* National/State Level Test */}
+                <section>
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">
+                    Whether qualified in the National/State Level Test for the National Talent Search Examination
+                  </h3>
+                  <div className="flex items-center space-x-6 mb-4">
+                    <label className="flex items-center">
+                      <input type="radio" name="national_state_test" checked={formData.national_state_test === true} onChange={() => setFormData((prev) => ({ ...prev, national_state_test: true }))} className="h-4 w-4 text-blue-600 border-gray-300" />
+                      <span className="ml-2 text-sm text-gray-700">Yes</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input type="radio" name="national_state_test" checked={formData.national_state_test === false} onChange={() => setFormData((prev) => ({ ...prev, national_state_test: false }))} className="h-4 w-4 text-blue-600 border-gray-300" />
+                      <span className="ml-2 text-sm text-gray-700">No</span>
+                    </label>
+                  </div>
+                </section>
+
+                {/* Co-curricular Activities */}
+                <section>
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">
+                    (e) Details of participation in co-curricular activities. Write the number of grades won in the relevant boxes.
+                  </h3>
+                  <div className="grid grid-cols-6 gap-2 mb-2 font-medium text-sm">
+                    <div className="col-span-1"></div>
+                    <div className="col-span-1">A Grade</div>
+                    <div className="col-span-1">B Grade</div>
+                    <div className="col-span-1">C Grade</div>
+                    <div className="col-span-1">D Grade</div>
+                    <div className="col-span-1">E Grade</div>
+                  </div>
+                  {(["state_science_fair", "state_social_science_fair", "state_maths_fair", "state_it_fest", "state_work_experience_fair"] as const).map((fair) => (
+                    <div key={fair} className="grid grid-cols-6 gap-2 mb-2">
+                      <div className="col-span-1 pt-2 text-sm">
+                        {fair === "state_science_fair" ? "State Science Fair" :
+                         fair === "state_social_science_fair" ? "State Social Science Fair" :
+                         fair === "state_maths_fair" ? "State Maths Fair" :
+                         fair === "state_it_fest" ? "State IT Fest" :
+                         "State Work Experience Fair"}
+                      </div>
+                      {(["a", "b", "c", "d", "e"] as const).map((grade) => (
+                        <div key={grade} className="col-span-1">
+                          <input
+                            type="number"
+                            name={`co_curricular.${fair}.${grade}`}
+                            value={formData.co_curricular[fair][grade]}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                            min="0"
+                          />
+                        </div>
+                      ))}
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Co-curricular Activities</label>
-                      <textarea name="co_curricular_activities" value={formData.co_curricular_activities} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Eligibility</label>
-                      <textarea name="eligibility" value={formData.eligibility} onChange={handleChange} rows={5} className="w-full px-3 py-2 border border-gray-300 rounded-md font-mono text-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className="flex items-center">
-                        <input type="checkbox" name="national_state_test" checked={formData.national_state_test} onChange={handleChange} className="mr-2" />
-                        <span className="text-sm font-medium text-gray-700">National/State Level Test</span>
+                  ))}
+                </section>
+
+                {/* Eligibility */}
+                <section>
+                  <h3 className="text-lg font-medium mb-4 pb-2 border-b">(f) (Tick checkboxes if eligible)</h3>
+                  <div className="flex items-center space-x-6 mb-4 flex-wrap gap-y-2">
+                    {(["little_kites", "jrc", "lss", "uss", "nmms"] as const).map((item) => (
+                      <label key={item} className="flex items-center">
+                        <input type="checkbox" name={`eligibility.${item}`} checked={formData.eligibility[item]} onChange={handleChange} className="h-4 w-4 text-blue-600 border-gray-300 rounded" />
+                        <span className="ml-2 text-sm text-gray-700">
+                          {item === "little_kites" ? "Little Kites (5 Grade)" : item.toUpperCase()}
+                        </span>
                       </label>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className={labelClass}>Number of Clubs</label>
+                      <input type="number" name="eligibility.clubs_count" value={formData.eligibility.clubs_count} onChange={handleChange} className={inputClass} min="0" />
                     </div>
                   </div>
                 </section>
@@ -524,7 +844,7 @@ export default function EditApplicationPage({
                     <><Save className="h-4 w-4 mr-2" /> Save Changes</>
                   )}
                 </Button>
-                <Link href={`/admin/applications/${params.id}`}>
+                <Link href="/admin">
                   <Button type="button" variant="outline">Cancel</Button>
                 </Link>
               </div>
