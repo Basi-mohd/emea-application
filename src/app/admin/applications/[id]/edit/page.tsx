@@ -385,8 +385,7 @@ export default function EditApplicationPage({
         const err = await res.json();
         throw new Error(err.error || "Failed to update");
       }
-      setSuccess(true);
-      setTimeout(() => router.push("/admin"), 1500);
+      router.push("/admin");
     } catch (err: any) {
       setError(err.message || "Failed to update application");
     } finally {
@@ -836,7 +835,7 @@ export default function EditApplicationPage({
                 </section>
               </div>
 
-              <div className="p-6 border-t border-gray-200 flex gap-4">
+              <div className="p-6 border-t border-gray-200 flex gap-4 justify-end">
                 <Button type="submit" disabled={saving}>
                   {saving ? (
                     <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Saving...</>
