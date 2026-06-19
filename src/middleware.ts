@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Define admission status
-const ADMISSION_STATUS = "Open";
+const ADMISSION_STATUS = "Closed";
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
