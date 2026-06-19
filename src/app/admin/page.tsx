@@ -112,7 +112,8 @@ export default function AdminPage() {
       let query = supabase
         .from("applications")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(100000);
       
       if (searchQuery) {
         query = query.ilike('register_number', `%${searchQuery}%`);
