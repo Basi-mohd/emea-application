@@ -113,7 +113,7 @@ export default function AdminPage() {
         .from("applications")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(100000);
+        .range(0, 1000000);
       
       if (searchQuery) {
         query = query.ilike('register_number', `%${searchQuery}%`);
